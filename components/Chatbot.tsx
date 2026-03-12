@@ -42,15 +42,25 @@ export default function Chatbot() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
+  // Lock scroll on mobile when open
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const isMobile = window.innerWidth < 640
+    if (isMobile) {
+      document.body.style.overflow = open ? 'hidden' : ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [open])
+
   const fillContactForm = (formData: FormData) => {
     const setNativeValue = (el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, value: string) => {
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
-        || Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value')?.set
+      const nativeInputValueSetter =
+        Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set ||
+        Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value')?.set
       nativeInputValueSetter?.call(el, value)
       el.dispatchEvent(new Event('input', { bubbles: true }))
       el.dispatchEvent(new Event('change', { bubbles: true }))
     }
-
     setTimeout(() => {
       document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
       setTimeout(() => {
@@ -90,13 +100,23 @@ export default function Chatbot() {
     }
   }
 
-  // Mobile: full screen when open; Desktop: small window bottom-right
   return (
     <>
-      {/* Toggle Button — hidden on mobile when open (header X handles close) */}
+      <style>{`
+        @keyframes pingOnce {
+          0% { transform: scale(1); opacity: 0.8; }
+          100% { transform: scale(1.8); opacity: 0; }
+        }
+        @keyframes typingDot {
+          0%,60%,100% { transform: translateY(0); opacity:0.4; }
+          30% { transform: translateY(-4px); opacity:1; }
+        }
+      `}</style>
+
+      {/* ── Toggle Button ── */}
       <button
         onClick={() => setOpen(o => !o)}
-        className={`fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[9000] w-12 h-12 md:w-14 md:h-14 items-center justify-center transition-all duration-300 hover:scale-110 ${open ? 'hidden md:flex' : 'flex'}`}
+        className={`fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[9001] w-12 h-12 md:w-14 md:h-14 items-center justify-center transition-all duration-300 hover:scale-110 ${open ? 'hidden md:flex' : 'flex'}`}
         style={{
           background: open ? '#1a1a1a' : 'linear-gradient(135deg,#7a6028,#C9A84C)',
           border: '1px solid rgba(201,168,76,0.3)',
@@ -104,11 +124,7 @@ export default function Chatbot() {
           boxShadow: '0 8px 32px rgba(201,168,76,0.25)',
         }}
       >
-        {open ? (
-          <span style={{color:'rgba(240,236,228,0.7)',fontSize:18}}>✕</span>
-        ) : (
-          <span style={{fontSize:20}}>💬</span>
-        )}
+        <span style={{ fontSize: 20 }}>💬</span>
         {showPulse && !open && (
           <span className="absolute inset-0 rounded-full" style={{
             border: '2px solid rgba(201,168,76,0.5)',
@@ -117,18 +133,63 @@ export default function Chatbot() {
         )}
       </button>
 
-      {/* Chat Window — fullscreen on mobile, fixed window on desktop */}
+      {/* ── Mobile: fullscreen overlay ── */}
+      {open && (
+        <div className="sm:hidden fixed inset-0 z-[9000] flex flex-col" style={{ background: '#0a0a0a' }}>
+          {/* Header */}
+          <div style={{
+            padding: '14px 16px',
+            borderBottom: '1px solid rgba(201,168,76,0.1)',
+            background: 'rgba(201,168,76,0.04)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexShrink: 0,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 34, height: 34, borderRadius: '50%',
+                background: 'linear-gradient(135deg,#7a6028,#C9A84C)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 14, flexShrink: 0,
+              }}>✦</div>
+              <div>
+                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: 14, color: 'rgba(240,236,228,0.9)', fontWeight: 500 }}>
+                  CodeaPlus Assistant
+                </div>
+                <div style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.15em', color: 'rgba(201,168,76,0.7)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+                  Online
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setOpen(false)}
+              style={{ color: 'rgba(240,236,228,0.5)', fontSize: 20, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+            >✕</button>
+          </div>
+
+          {/* Messages */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <ChatMessages messages={messages} loading={loading} formFilled={formFilled} bottomRef={bottomRef} />
+          </div>
+
+          {/* Input */}
+          <ChatInput input={input} setInput={setInput} send={send} loading={loading} inputRef={inputRef} />
+        </div>
+      )}
+
+      {/* ── Desktop: floating window ── */}
       <div
-        className="fixed z-[8999] flex flex-col"
+        className="hidden sm:flex fixed flex-col z-[9000]"
         style={{
-          // Mobile: full screen overlay
-          bottom: 0,
-          right: 0,
-          left: 0,
-          top: 0,
-          // Desktop overrides via inline style workaround — using responsive classes below
+          bottom: 96,
+          right: 32,
+          width: 360,
+          height: 480,
           background: '#0a0a0a',
           border: '1px solid rgba(201,168,76,0.2)',
+          borderRadius: 16,
           boxShadow: '0 24px 64px rgba(0,0,0,0.8)',
           opacity: open ? 1 : 0,
           pointerEvents: open ? 'all' : 'none',
@@ -137,124 +198,119 @@ export default function Chatbot() {
           overflow: 'hidden',
         }}
       >
-        {/* This inner wrapper handles desktop sizing */}
-        <style>{`
-          @media (min-width: 640px) {
-            .chatbot-window {
-              position: fixed !important;
-              bottom: 96px !important;
-              right: 32px !important;
-              left: auto !important;
-              top: auto !important;
-              width: 360px !important;
-              height: 480px !important;
-              border-radius: 16px !important;
-            }
-          }
-          @keyframes pingOnce {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.8); opacity: 0; }
-          }
-          @keyframes typingDot {
-            0%,60%,100% { transform: translateY(0); opacity:0.4; }
-            30% { transform: translateY(-4px); opacity:1; }
-          }
-        `}</style>
-        <div className="chatbot-window flex flex-col h-full w-full" style={{
-          background: '#0a0a0a',
-          overflow: 'hidden',
+        {/* Header */}
+        <div style={{
+          padding: '14px 18px',
+          borderBottom: '1px solid rgba(201,168,76,0.1)',
+          background: 'rgba(201,168,76,0.04)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          flexShrink: 0,
         }}>
-
-          {/* Header */}
           <div style={{
-            padding: '14px 18px',
-            borderBottom: '1px solid rgba(201,168,76,0.1)',
-            background: 'rgba(201,168,76,0.04)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 10,
-            flexShrink: 0,
-          }}>
-            <div style={{display:'flex',alignItems:'center',gap:10}}>
-              <div style={{
-                width: 36, height: 36, borderRadius: '50%',
-                background: 'linear-gradient(135deg,#7a6028,#C9A84C)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 16, flexShrink: 0,
-              }}>✦</div>
-              <div>
-                <div style={{fontFamily:'var(--font-cormorant,serif)',fontSize:15,color:'rgba(240,236,228,0.9)',fontWeight:500}}>CodeaPlus Assistant</div>
-                <div style={{fontFamily:'monospace',fontSize:9,letterSpacing:'0.15em',color:'rgba(201,168,76,0.7)',textTransform:'uppercase',display:'flex',alignItems:'center',gap:4}}>
-                  <span style={{width:5,height:5,borderRadius:'50%',background:'#22c55e',display:'inline-block'}} />
-                  Online
-                </div>
-              </div>
+            width: 36, height: 36, borderRadius: '50%',
+            background: 'linear-gradient(135deg,#7a6028,#C9A84C)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 16, flexShrink: 0,
+          }}>✦</div>
+          <div>
+            <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: 15, color: 'rgba(240,236,228,0.9)', fontWeight: 500 }}>
+              CodeaPlus Assistant
             </div>
-            {/* Close button visible on mobile */}
-            <button onClick={() => setOpen(false)} className="sm:hidden" style={{color:'rgba(240,236,228,0.5)',fontSize:18,background:'none',border:'none',cursor:'pointer'}}>✕</button>
-          </div>
-
-          {/* Messages */}
-          <div style={{flex:1,overflowY:'auto',padding:'16px',display:'flex',flexDirection:'column',gap:12}}>
-            {messages.map((m, i) => (
-              <div key={i} style={{display:'flex',justifyContent:m.role==='user'?'flex-end':'flex-start'}}>
-                <div style={{
-                  maxWidth: '82%',
-                  padding: '10px 14px',
-                  borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                  background: m.role === 'user'
-                    ? 'linear-gradient(135deg,rgba(201,168,76,0.8),rgba(201,168,76,0.6))'
-                    : 'rgba(255,255,255,0.05)',
-                  border: m.role === 'assistant' ? '1px solid rgba(201,168,76,0.1)' : 'none',
-                  color: m.role === 'user' ? '#060606' : 'rgba(240,236,228,0.85)',
-                  fontSize: 13,
-                  fontWeight: m.role === 'user' ? 500 : 300,
-                  lineHeight: 1.6,
-                  whiteSpace: 'pre-wrap',
-                }}>
-                  {m.content}
-                </div>
-              </div>
-            ))}
-
-            {loading && (
-              <div style={{display:'flex',justifyContent:'flex-start'}}>
-                <div style={{padding:'10px 16px',borderRadius:'16px 16px 16px 4px',background:'rgba(255,255,255,0.05)',border:'1px solid rgba(201,168,76,0.1)',display:'flex',gap:4,alignItems:'center'}}>
-                  {[0,1,2].map(i => (
-                    <div key={i} style={{width:6,height:6,borderRadius:'50%',background:'rgba(201,168,76,0.6)',animation:'typingDot 1.2s ease infinite',animationDelay:`${i*0.2}s`}} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {formFilled && (
-              <div style={{padding:'10px 14px',borderRadius:10,background:'rgba(34,197,94,0.08)',border:'1px solid rgba(34,197,94,0.2)',fontSize:12,color:'rgba(34,197,94,0.9)',fontFamily:'monospace',letterSpacing:'0.05em'}}>
-                ✓ Contact form filled! Please review and submit.
-              </div>
-            )}
-
-            <div ref={bottomRef} />
-          </div>
-
-          {/* Input */}
-          <div style={{padding:'12px',borderTop:'1px solid rgba(201,168,76,0.1)',display:'flex',gap:8,flexShrink:0,background:'rgba(0,0,0,0.3)'}}>
-            <input
-              ref={inputRef}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-              placeholder="Type your message..."
-              style={{flex:1,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(201,168,76,0.15)',borderRadius:10,padding:'10px 14px',color:'rgba(240,236,228,0.9)',fontSize:13,outline:'none',fontFamily:'inherit'}}
-            />
-            <button
-              onClick={send}
-              disabled={loading || !input.trim()}
-              style={{width:40,height:40,borderRadius:10,background:input.trim()?'linear-gradient(135deg,#7a6028,#C9A84C)':'rgba(255,255,255,0.05)',border:'1px solid rgba(201,168,76,0.2)',color:input.trim()?'#060606':'rgba(201,168,76,0.3)',fontSize:16,cursor:'pointer',transition:'all 0.2s',flexShrink:0}}
-            >↑</button>
+            <div style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.15em', color: 'rgba(201,168,76,0.7)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+              Online
+            </div>
           </div>
         </div>
+
+        {/* Messages */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <ChatMessages messages={messages} loading={loading} formFilled={formFilled} bottomRef={bottomRef} />
+        </div>
+
+        {/* Input */}
+        <ChatInput input={input} setInput={setInput} send={send} loading={loading} inputRef={inputRef} />
       </div>
     </>
+  )
+}
+
+// ── Shared subcomponents ──
+
+function ChatMessages({ messages, loading, formFilled, bottomRef }: {
+  messages: Message[]
+  loading: boolean
+  formFilled: boolean
+  bottomRef: React.RefObject<HTMLDivElement>
+}) {
+  return (
+    <>
+      {messages.map((m, i) => (
+        <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+          <div style={{
+            maxWidth: '82%',
+            padding: '10px 14px',
+            borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+            background: m.role === 'user'
+              ? 'linear-gradient(135deg,rgba(201,168,76,0.8),rgba(201,168,76,0.6))'
+              : 'rgba(255,255,255,0.05)',
+            border: m.role === 'assistant' ? '1px solid rgba(201,168,76,0.1)' : 'none',
+            color: m.role === 'user' ? '#060606' : 'rgba(240,236,228,0.85)',
+            fontSize: 13,
+            fontWeight: m.role === 'user' ? 500 : 300,
+            lineHeight: 1.6,
+            whiteSpace: 'pre-wrap',
+          }}>
+            {m.content}
+          </div>
+        </div>
+      ))}
+
+      {loading && (
+        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+          <div style={{ padding: '10px 16px', borderRadius: '16px 16px 16px 4px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,168,76,0.1)', display: 'flex', gap: 4, alignItems: 'center' }}>
+            {[0, 1, 2].map(i => (
+              <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(201,168,76,0.6)', animation: 'typingDot 1.2s ease infinite', animationDelay: `${i * 0.2}s` }} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {formFilled && (
+        <div style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', fontSize: 12, color: 'rgba(34,197,94,0.9)', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+          ✓ Contact form filled! Please review and submit.
+        </div>
+      )}
+
+      <div ref={bottomRef} />
+    </>
+  )
+}
+
+function ChatInput({ input, setInput, send, loading, inputRef }: {
+  input: string
+  setInput: (v: string) => void
+  send: () => void
+  loading: boolean
+  inputRef: React.RefObject<HTMLInputElement>
+}) {
+  return (
+    <div style={{ padding: '12px', borderTop: '1px solid rgba(201,168,76,0.1)', display: 'flex', gap: 8, flexShrink: 0, background: 'rgba(0,0,0,0.3)' }}>
+      <input
+        ref={inputRef}
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
+        placeholder="Type your message..."
+        style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 10, padding: '10px 14px', color: 'rgba(240,236,228,0.9)', fontSize: 13, outline: 'none', fontFamily: 'inherit' }}
+      />
+      <button
+        onClick={send}
+        disabled={loading || !input.trim()}
+        style={{ width: 40, height: 40, borderRadius: 10, background: input.trim() ? 'linear-gradient(135deg,#7a6028,#C9A84C)' : 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,168,76,0.2)', color: input.trim() ? '#060606' : 'rgba(201,168,76,0.3)', fontSize: 16, cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0 }}
+      >↑</button>
+    </div>
   )
 }

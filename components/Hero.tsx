@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const IMG_BG        = 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1920&q=90'
 const IMG_LAPTOP    = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=90'
@@ -7,36 +7,7 @@ const IMG_PHONE     = 'https://images.unsplash.com/photo-1512941937669-90a1b58e7
 const IMG_CARD      = 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=400&q=90'
 
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [counts, setCounts] = useState({ projects: 0, satisfaction: 0, years: 0 })
-
-  useEffect(() => {
-    const cv = canvasRef.current
-    if (!cv) return
-    const cx = cv.getContext('2d')!
-    let W = cv.width = window.innerWidth
-    let H = cv.height = window.innerHeight
-
-    class Pt {
-      x = Math.random() * W; y = Math.random() * H
-      sz = Math.random() * 1.4 + 0.3
-      sx = (Math.random() - .5) * .22; sy = (Math.random() - .5) * .22
-      op = Math.random() * .45 + .1; gold = Math.random() > .65
-      u() { this.x += this.sx; this.y += this.sy; if(this.x<0)this.x=W;if(this.x>W)this.x=0;if(this.y<0)this.y=H;if(this.y>H)this.y=0 }
-      d() { cx.beginPath();cx.arc(this.x,this.y,this.sz,0,Math.PI*2);cx.fillStyle=this.gold?`rgba(201,168,76,${this.op})`:`rgba(240,236,228,${this.op*.35})`;cx.fill() }
-    }
-    const pts = Array.from({length:130}, () => new Pt())
-    window.addEventListener('resize', () => { W=cv.width=innerWidth;H=cv.height=innerHeight })
-    let raf: number
-    const draw = () => {
-      cx.clearRect(0,0,W,H)
-      for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<115){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.strokeStyle=`rgba(201,168,76,${.045*(1-d/115)})`;cx.lineWidth=.5;cx.stroke()}}}
-      pts.forEach(p=>{p.u();p.d()})
-      raf = requestAnimationFrame(draw)
-    }
-    draw()
-    return () => cancelAnimationFrame(raf)
-  }, [])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,7 +38,40 @@ export default function Hero() {
         <div className="absolute inset-[-40%]" style={{ background:'radial-gradient(ellipse 60% 50% at 20% 50%,rgba(201,168,76,.065) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 80% 30%,rgba(201,168,76,.04) 0%,transparent 60%)', animation:'bgPulse 9s ease-in-out infinite alternate' }} />
       </div>
 
-      <canvas ref={canvasRef} className="absolute inset-0 z-[1] pointer-events-none" />
+      {/* Floating orbs — replaces particle grid */}
+      <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
+        {/* Large gold orb — left */}
+        <div style={{
+          position:'absolute', top:'20%', left:'-10%',
+          width:500, height:500, borderRadius:'50%',
+          background:'radial-gradient(circle,rgba(201,168,76,0.07) 0%,transparent 70%)',
+          animation:'orbFloat1 12s ease-in-out infinite',
+          filter:'blur(40px)',
+        }} />
+        {/* Medium orb — top right */}
+        <div style={{
+          position:'absolute', top:'-5%', right:'10%',
+          width:350, height:350, borderRadius:'50%',
+          background:'radial-gradient(circle,rgba(201,168,76,0.05) 0%,transparent 70%)',
+          animation:'orbFloat2 15s ease-in-out infinite',
+          filter:'blur(50px)',
+        }} />
+        {/* Small orb — bottom right */}
+        <div style={{
+          position:'absolute', bottom:'15%', right:'20%',
+          width:250, height:250, borderRadius:'50%',
+          background:'radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%)',
+          animation:'orbFloat3 10s ease-in-out infinite',
+          filter:'blur(30px)',
+        }} />
+        {/* Subtle horizontal light streak */}
+        <div style={{
+          position:'absolute', top:'45%', left:0, right:0,
+          height:1,
+          background:'linear-gradient(90deg,transparent 0%,rgba(201,168,76,0.08) 30%,rgba(201,168,76,0.15) 50%,rgba(201,168,76,0.08) 70%,transparent 100%)',
+          animation:'streakPulse 6s ease-in-out infinite',
+        }} />
+      </div>
 
       {/* Content */}
       <div className="relative z-[5] grid grid-cols-1 md:grid-cols-2 items-center gap-8 pt-24 md:pt-0">
@@ -178,6 +182,10 @@ export default function Hero() {
         @keyframes floatA { 0%,100%{transform:translateY(0px) rotate(0deg)} 33%{transform:translateY(-14px) rotate(.4deg)} 66%{transform:translateY(-6px) rotate(-.3deg)} }
         @keyframes floatB { 0%,100%{transform:translateY(0px)} 40%{transform:translateY(-18px) rotate(-.5deg)} 70%{transform:translateY(-8px) rotate(.3deg)} }
         @keyframes floatC { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-12px)} }
+        @keyframes orbFloat1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-30px) scale(1.08)} }
+        @keyframes orbFloat2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-30px,40px) scale(1.05)} }
+        @keyframes orbFloat3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(20px,-20px) scale(1.1)} }
+        @keyframes streakPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
       `}</style>
     </section>
   )
