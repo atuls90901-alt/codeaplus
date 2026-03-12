@@ -93,10 +93,10 @@ export default function Chatbot() {
   // Mobile: full screen when open; Desktop: small window bottom-right
   return (
     <>
-      {/* Toggle Button — bottom-right, above WhatsApp on mobile */}
+      {/* Toggle Button — hidden on mobile when open (header X handles close) */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[9000] w-12 h-12 md:w-14 md:h-14 flex items-center justify-center transition-all duration-300 hover:scale-110"
+        className={`fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[9000] w-12 h-12 md:w-14 md:h-14 items-center justify-center transition-all duration-300 hover:scale-110 ${open ? 'hidden md:flex' : 'flex'}`}
         style={{
           background: open ? '#1a1a1a' : 'linear-gradient(135deg,#7a6028,#C9A84C)',
           border: '1px solid rgba(201,168,76,0.3)',

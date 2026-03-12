@@ -17,6 +17,12 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Lock body scroll when menu open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
   const closeMenu = () => setMenuOpen(false)
 
   return (
@@ -61,8 +67,7 @@ export default function Navbar() {
                 </Link>
               )}
               <a href="#contact"
-                className="font-mono text-[10px] tracking-[.15em] uppercase text-[#060606] bg-gold px-6 py-3 relative overflow-hidden group"
-                style={{ color: '#060606' }}>
+                className="font-mono text-[10px] tracking-[.15em] uppercase text-[#060606] bg-gold px-6 py-3 relative overflow-hidden group">
                 <span className="absolute inset-0 bg-gold-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
                 <span className="relative z-10">Start Project</span>
               </a>
@@ -86,73 +91,110 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger — FIXED */}
         <button
           onClick={() => setMenuOpen(o => !o)}
-          className="md:hidden flex flex-col gap-1.5 p-2"
+          className="md:hidden relative w-10 h-10 flex items-center justify-center"
           aria-label="Menu"
         >
-          <span className="block w-6 h-px bg-gold transition-all duration-300" style={{ transform: menuOpen ? 'rotate(45deg) translateY(4px)' : '' }} />
-          <span className="block w-6 h-px bg-gold transition-all duration-300" style={{ opacity: menuOpen ? 0 : 1 }} />
-          <span className="block w-6 h-px bg-gold transition-all duration-300" style={{ transform: menuOpen ? 'rotate(-45deg) translateY(-4px)' : '' }} />
+          <span
+            className="absolute block w-6 h-[1.5px] bg-gold transition-all duration-300 ease-in-out"
+            style={{
+              transform: menuOpen ? 'rotate(45deg) translateY(0px)' : 'translateY(-5px)',
+            }}
+          />
+          <span
+            className="absolute block w-6 h-[1.5px] bg-gold transition-all duration-300 ease-in-out"
+            style={{
+              opacity: menuOpen ? 0 : 1,
+              transform: menuOpen ? 'scaleX(0)' : 'scaleX(1)',
+            }}
+          />
+          <span
+            className="absolute block w-6 h-[1.5px] bg-gold transition-all duration-300 ease-in-out"
+            style={{
+              transform: menuOpen ? 'rotate(-45deg) translateY(0px)' : 'translateY(5px)',
+            }}
+          />
         </button>
       </nav>
 
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-[999] bg-[#060606]/98 flex flex-col pt-20 px-8 pb-10"
-          style={{ animation: 'fadeUp 0.2s ease both' }}>
-          <ul className="flex flex-col gap-6 mb-10">
-            {['Services', 'Work', 'About', 'Pricing'].map(item => (
-              <li key={item}>
-                <a href={`#${item.toLowerCase()}`}
-                  onClick={closeMenu}
-                  className="font-cormorant text-[36px] font-light text-white/70 hover:text-gold transition-colors">
-                  {item}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <div className="border-t border-gold/10 pt-8 flex flex-col gap-3">
-            {user ? (
-              <>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center font-cormorant text-base font-semibold text-[#060606]"
-                    style={{ background: 'linear-gradient(135deg,#7a6028,#C9A84C)' }}>
-                    {user.email?.[0].toUpperCase()}
-                  </div>
-                  <span className="font-mono text-[11px] text-white/50">{user.email}</span>
+      {/* Mobile Menu Overlay */}
+      <div
+        className="fixed inset-0 z-[999] flex flex-col pt-20 px-8 pb-10 md:hidden"
+        style={{
+          background: 'rgba(6,6,6,0.99)',
+          backdropFilter: 'blur(16px)',
+          opacity: menuOpen ? 1 : 0,
+          pointerEvents: menuOpen ? 'all' : 'none',
+          transition: 'opacity 0.25s ease',
+        }}
+      >
+        <ul className="flex flex-col gap-2 mb-10">
+          {['Services', 'Work', 'About', 'Pricing'].map((item, i) => (
+            <li key={item}>
+              <a
+                href={`#${item.toLowerCase()}`}
+                onClick={closeMenu}
+                className="block font-cormorant text-[40px] font-light text-white/70 hover:text-gold transition-colors py-2"
+                style={{
+                  transform: menuOpen ? 'translateX(0)' : 'translateX(-20px)',
+                  opacity: menuOpen ? 1 : 0,
+                  transition: `all 0.3s ease ${i * 0.07 + 0.1}s`,
+                }}
+              >
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div
+          className="border-t border-gold/10 pt-8 flex flex-col gap-3"
+          style={{
+            opacity: menuOpen ? 1 : 0,
+            transform: menuOpen ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'all 0.3s ease 0.35s',
+          }}
+        >
+          {user ? (
+            <>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center font-cormorant text-base font-semibold text-[#060606]"
+                  style={{ background: 'linear-gradient(135deg,#7a6028,#C9A84C)' }}>
+                  {user.email?.[0].toUpperCase()}
                 </div>
-                {user.email === ADMIN_EMAIL && (
-                  <Link href="/admin" onClick={closeMenu}
-                    className="font-mono text-[11px] tracking-[.15em] uppercase text-white/50 border border-gold/10 px-5 py-3 text-center">
-                    Dashboard
-                  </Link>
-                )}
-                <a href="#contact" onClick={closeMenu}
-                  className="font-mono text-[11px] tracking-[.15em] uppercase text-[#060606] bg-gold px-6 py-4 text-center">
-                  Start Project
-                </a>
-                <button onClick={() => { signOut(); closeMenu() }}
-                  className="font-mono text-[10px] tracking-[.15em] uppercase text-white/30 border border-gold/10 px-5 py-3">
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <>
-                <button onClick={() => { setShowModal(true); closeMenu() }}
-                  className="font-mono text-[11px] tracking-[.15em] uppercase text-white/50 border border-gold/10 px-5 py-4">
-                  Sign In
-                </button>
-                <button onClick={() => { setShowModal(true); closeMenu() }}
-                  className="font-mono text-[11px] tracking-[.15em] uppercase text-[#060606] bg-gold px-6 py-4">
-                  Start Project
-                </button>
-              </>
-            )}
-          </div>
+                <span className="font-mono text-[11px] text-white/50 truncate">{user.email}</span>
+              </div>
+              {user.email === ADMIN_EMAIL && (
+                <Link href="/admin" onClick={closeMenu}
+                  className="font-mono text-[11px] tracking-[.15em] uppercase text-white/50 border border-gold/10 px-5 py-3 text-center">
+                  Dashboard
+                </Link>
+              )}
+              <a href="#contact" onClick={closeMenu}
+                className="font-mono text-[11px] tracking-[.15em] uppercase text-[#060606] bg-gold px-6 py-4 text-center">
+                Start Project
+              </a>
+              <button onClick={() => { signOut(); closeMenu() }}
+                className="font-mono text-[10px] tracking-[.15em] uppercase text-white/30 border border-gold/10 px-5 py-3">
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => { setShowModal(true); closeMenu() }}
+                className="font-mono text-[11px] tracking-[.15em] uppercase text-white/50 border border-gold/10 px-5 py-4">
+                Sign In
+              </button>
+              <button onClick={() => { setShowModal(true); closeMenu() }}
+                className="font-mono text-[11px] tracking-[.15em] uppercase text-[#060606] bg-gold px-6 py-4">
+                Start Project
+              </button>
+            </>
+          )}
         </div>
-      )}
+      </div>
 
       {showModal && (
         <LoginModal
