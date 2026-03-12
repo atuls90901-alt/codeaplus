@@ -1,71 +1,76 @@
 'use client'
 import { useEffect, useRef } from 'react'
 
-const services = [
-  { num:'01', icon:'⬡', name:'Web Design', desc:'Pixel-perfect responsive interfaces that convert. Every interaction designed with intention and craft.', tags:['UI/UX','Figma','Responsive'] },
-  { num:'02', icon:'◈', name:'Full Stack Dev', desc:'Scalable MERN & Next.js apps. Fast, secure architecture built to handle real-world traffic.', tags:['Next.js','React','Node.js'] },
-  { num:'03', icon:'◎', name:'E-Commerce', desc:'Revenue-driving storefronts with seamless checkout, inventory management and analytics dashboards.', tags:['Stripe','Razorpay','MongoDB'] },
-  { num:'04', icon:'⬧', name:'API Development', desc:'RESTful & GraphQL APIs engineered for performance, security and seamless third-party integration.', tags:['REST','GraphQL','JWT'] },
-  { num:'05', icon:'◇', name:'Maintenance', desc:'Proactive monthly care — monitoring, updates, backups and performance optimization.', tags:['24/7 Monitor','Updates','Backups'] },
-  { num:'06', icon:'◉', name:'SEO & Speed', desc:'Core Web Vitals mastery and technical SEO. Your site ranks #1 and loads in under a second.', tags:['SEO','Performance','Analytics'] },
-]
-
-export default function Services() {
-  const sectionRef = useRef<HTMLElement>(null)
-
+export default function About() {
+  const ref = useRef<HTMLElement>(null)
   useEffect(() => {
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') })
     }, { threshold: 0.1 })
-    sectionRef.current?.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => obs.observe(el))
+    ref.current?.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => obs.observe(el))
     return () => obs.disconnect()
   }, [])
 
-  const tilt = (e: React.MouseEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect()
-    const x = (e.clientX-r.left)/r.width-.5, y = (e.clientY-r.top)/r.height-.5
-    e.currentTarget.style.transform = `perspective(800px) rotateY(${x*13}deg) rotateX(${-y*10}deg) scale(1.02)`
-    e.currentTarget.style.setProperty('--mx', (e.clientX-r.left)/r.width*100+'%')
-    e.currentTarget.style.setProperty('--my', (e.clientY-r.top)/r.height*100+'%')
-  }
-  const untilt = (e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.transform = '' }
-
   return (
-    <section ref={sectionRef} id="services" className="py-32 px-16 bg-[#0a0a0a]">
-      <div className="grid grid-cols-2 gap-12 mb-20 items-end">
-        <div className="reveal-left">
-          <div className="font-mono text-[10px] tracking-[.3em] uppercase text-gold mb-3 flex items-center gap-3">
-            What We Do <span className="flex-1 max-w-[50px] h-px bg-gold/10" />
-          </div>
-          <h2 className="font-cormorant text-[clamp(38px,5vw,68px)] font-light leading-[1.05]">
-            Our <em className="italic text-gold">Services</em>
-          </h2>
-        </div>
-        <p className="text-[16px] font-light text-white/50 leading-[1.8] max-w-[460px] reveal-right">
-          End-to-end digital solutions engineered with modern stacks. Zero templates — every product built from scratch.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-3 gap-px" style={{background:'rgba(201,168,76,0.1)',border:'1px solid rgba(201,168,76,0.1)'}}>
-        {services.map((s, i) => (
-          <div
-            key={s.num}
-            className={`reveal delay-${i%3} bg-[#0a0a0a] p-12 relative overflow-hidden group transition-colors duration-300 hover:bg-[#111]`}
-            onMouseMove={tilt} onMouseLeave={untilt}
-            data-hover
-          >
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-            <div className="font-mono text-[10px] tracking-[.2em] text-gold/40 mb-7">{s.num}</div>
-            <div className="text-[28px] mb-5">{s.icon}</div>
-            <h3 className="font-cormorant text-[26px] font-normal mb-3">{s.name}</h3>
-            <p className="text-[14px] text-white/50 leading-[1.75] font-light">{s.desc}</p>
-            <div className="flex flex-wrap gap-2 mt-6">
-              {s.tags.map(t => (
-                <span key={t} className="font-mono text-[9px] tracking-[.1em] uppercase text-gold/40 border border-gold/10 group-hover:border-gold/35 group-hover:text-gold px-2.5 py-1 transition-all duration-300">{t}</span>
-              ))}
+    <section ref={ref} id="about" className="py-20 md:py-32 px-6 md:px-16 bg-[#0a0a0a] grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 items-center">
+      {/* Visual */}
+      <div className="reveal-left relative">
+        <div className="bg-[#111] border border-gold/10 p-6 md:p-9 relative overflow-hidden min-h-[340px] md:min-h-[460px]">
+          <div className="bg-[#0c0c0c] border border-white/5 rounded-md overflow-hidden">
+            <div className="h-[30px] bg-white/3 border-b border-white/4 flex items-center px-3 gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400/60" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400/60" />
+            </div>
+            <div className="p-4 md:p-5 font-mono text-[11px] md:text-[12px] leading-[2]">
+              <span className="text-white/25">{`// Crafting your vision`}</span><br/>
+              <span className="text-blue-300">const</span> <span className="text-white/90">project</span> = <span className="text-blue-300">await</span> <span className="text-orange-300">studio</span>.<span className="text-orange-300">create</span>{'({'}<br/>
+              &nbsp;&nbsp;<span className="text-white/90">stack</span>: [<span className="text-green-300">'Next.js'</span>, <span className="text-green-300">'Node'</span>],<br/>
+              &nbsp;&nbsp;<span className="text-white/90">db</span>: <span className="text-green-300">'MongoDB'</span>,<br/>
+              &nbsp;&nbsp;<span className="text-white/90">deploy</span>: <span className="text-green-300">'Vercel'</span><br/>
+              {'}'});<br/><br/>
+              <span className="text-white/25">{`// Result ✓`}</span><br/>
+              <span className="text-blue-300">return</span> {'{'}<br/>
+              &nbsp;&nbsp;<span className="text-white/90">quality</span>: <span className="text-gold">'exceptional'</span>,<br/>
+              &nbsp;&nbsp;<span className="text-white/90">client</span>: <span className="text-gold">'happy'</span>
+              <span className="inline-block w-0.5 h-3.5 bg-gold ml-0.5 align-middle" style={{animation:'blink 1s infinite'}} /><br/>
+              {'}'}; 
             </div>
           </div>
-        ))}
+        </div>
+        <div className="absolute -bottom-5 -right-5 w-[100px] h-[100px] md:w-[136px] md:h-[136px] bg-gold border-4 border-[#0a0a0a] flex flex-col items-center justify-center z-10">
+          <div className="font-cormorant text-[32px] md:text-[42px] font-light text-[#060606] leading-none">3+</div>
+          <div className="font-mono text-[8px] md:text-[9px] tracking-[.1em] uppercase text-[#060606] text-center mt-1">Years of<br/>Excellence</div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="reveal-right mt-8 md:mt-0">
+        <div className="font-mono text-[10px] tracking-[.3em] uppercase text-gold mb-3 flex items-center gap-3">
+          Who We Are <span className="flex-1 max-w-[50px] h-px bg-gold/10" />
+        </div>
+        <h2 className="font-cormorant text-[clamp(38px,5vw,68px)] font-light leading-[1.05] mb-5">
+          Built by <em className="italic text-gold">Developers,</em><br/>for Business
+        </h2>
+        <p className="text-[15px] md:text-[16px] font-light text-white/50 leading-[1.8]">
+          We're a boutique full-stack studio. We don't just code — we engineer digital products that solve real problems and drive measurable growth.
+        </p>
+        <div className="flex flex-col gap-4 mt-8 md:mt-10">
+          {[
+            { icon:'⚡', title:'Lightning Fast Delivery', desc:'Most projects shipped in 2–4 weeks without sacrificing quality.' },
+            { icon:'🔒', title:'Security First', desc:'Enterprise-grade security baked into every layer.' },
+            { icon:'♾', title:'Built to Scale', desc:'Architecture designed to grow from 100 to 1,000,000 users.' },
+          ].map(f => (
+            <div key={f.title} className="flex gap-4 md:gap-5 items-start p-5 md:p-6 border border-gold/10 hover:border-gold/38 hover:bg-gold/2 transition-all group relative overflow-hidden">
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gold scale-y-0 group-hover:scale-y-100 transition-transform duration-300" />
+              <span className="text-xl mt-0.5">{f.icon}</span>
+              <div>
+                <h4 className="text-[14px] md:text-[15px] font-medium mb-1">{f.title}</h4>
+                <p className="text-[13px] text-white/50 font-light leading-[1.65]">{f.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )

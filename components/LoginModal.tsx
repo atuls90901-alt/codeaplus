@@ -21,8 +21,7 @@ export default function LoginModal({ onClose, onSuccess }: LoginModalProps) {
       if (tab === 'login') {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
-        onSuccess()
-        onClose()
+        onSuccess(); onClose()
       } else {
         const { error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
@@ -41,39 +40,34 @@ export default function LoginModal({ onClose, onSuccess }: LoginModalProps) {
     })
   }
 
-  const iCls = "w-full bg-[#111] border border-gold/10 focus:border-gold text-white font-light text-[14px] px-5 py-3.5 outline-none transition-all duration-300"
+  const iCls = "w-full bg-[#111] border border-gold/10 focus:border-gold text-white font-light text-[14px] px-4 md:px-5 py-3 md:py-3.5 outline-none transition-all duration-300"
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal */}
-      <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
-        <div className="w-full max-w-[440px] bg-[#0a0a0a] border border-gold/20 p-10 relative"
+      <div className="fixed inset-0 z-[10001] flex items-end sm:items-center justify-center p-0 sm:p-4">
+        {/* On mobile: slides up from bottom. On desktop: centered modal */}
+        <div className="w-full sm:max-w-[440px] bg-[#0a0a0a] border border-gold/20 sm:border p-6 md:p-10 relative rounded-t-2xl sm:rounded-none border-t border-x sm:border"
           style={{ animation: 'fadeUp 0.3s ease both' }}>
 
-          {/* Close */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 font-mono text-[18px] text-white/30 hover:text-white transition-colors"
-          >
-            ✕
-          </button>
+            className="absolute top-4 right-4 font-mono text-[18px] text-white/30 hover:text-white transition-colors"
+          >✕</button>
 
-          {/* Logo */}
-          <div className="font-cormorant text-3xl font-light text-center mb-1">
+          {/* Drag handle on mobile */}
+          <div className="w-10 h-1 bg-white/15 rounded-full mx-auto mb-5 sm:hidden" />
+
+          <div className="font-cormorant text-2xl md:text-3xl font-light text-center mb-1">
             CodeaPlus<span className="text-gold">.</span>
           </div>
-          <div className="font-mono text-[10px] tracking-[.3em] uppercase text-white/40 text-center mb-8">
+          <div className="font-mono text-[10px] tracking-[.3em] uppercase text-white/40 text-center mb-6 md:mb-8">
             {tab === 'login' ? 'Welcome Back' : 'Create Account'}
           </div>
 
           {/* Tabs */}
-          <div className="flex border border-gold/10 mb-7">
+          <div className="flex border border-gold/10 mb-6 md:mb-7">
             {(['login', 'signup'] as const).map(t => (
               <button key={t} onClick={() => { setTab(t); setStatus('idle'); setErrMsg('') }}
                 className={`flex-1 font-mono text-[10px] tracking-[.2em] uppercase py-3 transition-all ${tab === t ? 'bg-gold text-[#060606]' : 'text-white/40 hover:text-white'}`}>
@@ -92,10 +86,9 @@ export default function LoginModal({ onClose, onSuccess }: LoginModalProps) {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {/* Google */}
               <button
                 onClick={handleGoogle}
-                className="w-full flex items-center justify-center gap-3 border border-gold/15 py-3.5 text-[13px] font-light text-white/70 hover:border-gold/40 hover:text-white transition-all group"
+                className="w-full flex items-center justify-center gap-3 border border-gold/15 py-3 md:py-3.5 text-[13px] font-light text-white/70 hover:border-gold/40 hover:text-white transition-all"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -106,14 +99,12 @@ export default function LoginModal({ onClose, onSuccess }: LoginModalProps) {
                 Continue with Google
               </button>
 
-              {/* Divider */}
               <div className="flex items-center gap-4">
                 <div className="flex-1 h-px bg-gold/10" />
                 <span className="font-mono text-[9px] tracking-widest uppercase text-white/30">or</span>
                 <div className="flex-1 h-px bg-gold/10" />
               </div>
 
-              {/* Email */}
               <div className="flex flex-col gap-2">
                 <label className="font-mono text-[9px] tracking-[.2em] uppercase text-white/40">Email</label>
                 <input className={iCls} type="email" value={email}
@@ -135,7 +126,7 @@ export default function LoginModal({ onClose, onSuccess }: LoginModalProps) {
               <button
                 onClick={handleEmailAuth}
                 disabled={status === 'loading'}
-                className="w-full font-mono text-[11px] tracking-[.2em] uppercase text-[#060606] bg-gold py-4 relative overflow-hidden group disabled:opacity-60 mt-1"
+                className="w-full font-mono text-[11px] tracking-[.2em] uppercase text-[#060606] bg-gold py-3.5 md:py-4 relative overflow-hidden group disabled:opacity-60 mt-1"
               >
                 <span className="absolute inset-0 bg-gold-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
                 <span className="relative z-10">

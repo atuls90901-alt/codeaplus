@@ -22,7 +22,7 @@ export default function Loader() {
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center"
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center px-6"
       style={{
         background: '#060606',
         transition: 'opacity 0.8s ease',
@@ -30,12 +30,12 @@ export default function Loader() {
       }}
     >
       <div
-        className="font-cormorant text-5xl font-light tracking-widest"
+        className="font-cormorant text-4xl md:text-5xl font-light tracking-widest text-center"
         style={{ animation: 'fadeUp 0.6s ease 0.2s both' }}
       >
         CodeaPlus<span className="text-gold">.</span>
       </div>
-      <div className="w-60 h-px bg-white/5 mt-9 relative overflow-hidden">
+      <div className="w-48 md:w-60 h-px bg-white/5 mt-8 md:mt-9 relative overflow-hidden">
         <div
           className="absolute top-0 left-0 h-full"
           style={{

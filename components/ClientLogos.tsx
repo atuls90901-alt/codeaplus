@@ -24,24 +24,23 @@ export default function ClientLogos() {
   }, [])
 
   return (
-    <section ref={ref} className="py-16 px-16 bg-[#060606] border-y border-gold/8">
-      <div className="reveal text-center font-mono text-[9px] tracking-[.3em] uppercase text-white/25 mb-10">
+    <section ref={ref} className="py-12 md:py-16 px-4 md:px-16 bg-[#060606] border-y border-gold/8">
+      <div className="reveal text-center font-mono text-[9px] tracking-[.3em] uppercase text-white/25 mb-8 md:mb-10">
         Trusted by growing businesses across India
       </div>
 
       {/* Scrolling logos */}
       <div className="relative overflow-hidden">
-        <div className="flex gap-12 items-center" style={{ animation: 'logoScroll 20s linear infinite' }}>
+        <div className="flex gap-8 md:gap-12 items-center" style={{ animation: 'logoScroll 20s linear infinite' }}>
           {[...clients, ...clients].map((c, i) => (
-            <div key={i} className="flex items-center gap-3 flex-shrink-0 group">
-              {/* Logo mark */}
-              <div className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:border-gold/40"
+            <div key={i} className="flex items-center gap-2 md:gap-3 flex-shrink-0 group">
+              <div className="w-8 h-8 md:w-9 md:h-9 rounded flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:border-gold/40"
                 style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.12)' }}>
-                <span className="font-cormorant text-[13px] font-semibold text-gold/60 group-hover:text-gold transition-colors">
+                <span className="font-cormorant text-[11px] md:text-[13px] font-semibold text-gold/60 group-hover:text-gold transition-colors">
                   {c.abbr}
                 </span>
               </div>
-              <span className="font-cormorant text-[18px] font-light text-white/25 group-hover:text-white/50 transition-colors whitespace-nowrap tracking-wide">
+              <span className="font-cormorant text-[15px] md:text-[18px] font-light text-white/25 group-hover:text-white/50 transition-colors whitespace-nowrap tracking-wide">
                 {c.name}
               </span>
             </div>
@@ -49,9 +48,9 @@ export default function ClientLogos() {
         </div>
 
         {/* Fade edges */}
-        <div className="absolute inset-y-0 left-0 w-24 pointer-events-none"
+        <div className="absolute inset-y-0 left-0 w-12 md:w-24 pointer-events-none"
           style={{ background: 'linear-gradient(90deg,#060606,transparent)' }} />
-        <div className="absolute inset-y-0 right-0 w-24 pointer-events-none"
+        <div className="absolute inset-y-0 right-0 w-12 md:w-24 pointer-events-none"
           style={{ background: 'linear-gradient(270deg,#060606,transparent)' }} />
       </div>
 

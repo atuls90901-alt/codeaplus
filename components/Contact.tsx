@@ -41,7 +41,7 @@ export default function Contact() {
 
   return (
     <>
-      <section ref={ref} id="contact" className="py-32 px-16 bg-[#060606] grid grid-cols-2 gap-24 items-start">
+      <section ref={ref} id="contact" className="py-20 md:py-32 px-6 md:px-16 bg-[#060606] grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 items-start">
         <div className="reveal-left">
           <div className="font-mono text-[10px] tracking-[.3em] uppercase text-gold mb-3 flex items-center gap-3">
             Let's Talk <span className="flex-1 max-w-[50px] h-px bg-gold/10" />
@@ -49,14 +49,14 @@ export default function Contact() {
           <h2 className="font-cormorant text-[clamp(38px,5vw,68px)] font-light leading-[1.05] mb-5">
             Start Your <em className="italic text-gold">Project</em>
           </h2>
-          <p className="text-[16px] font-light text-white/50 leading-[1.8] max-w-[460px]">
+          <p className="text-[15px] md:text-[16px] font-light text-white/50 leading-[1.8]">
             Ready to build something extraordinary? We reply within 24 hours — no fluff, just results.
           </p>
-          <div className="flex flex-col gap-4 mt-11">
-            {[{ icon:'✉',label:'Email',val:'hello@yourstudio.com' },{ icon:'◎',label:'WhatsApp',val:'+91 98765 43210' },{ icon:'⬡',label:'Location',val:'India — Working Globally' }].map(c => (
-              <div key={c.label} className="flex gap-5 items-center p-5 px-6 border border-gold/10 hover:border-gold/38 hover:bg-gold/2 transition-all" data-hover>
+          <div className="flex flex-col gap-3 mt-8 md:mt-11">
+            {[{ icon:'✉',label:'Email',val:'hello@codeaplus.pro' },{ icon:'◎',label:'WhatsApp',val:'+91 98765 43210' },{ icon:'⬡',label:'Location',val:'India — Working Globally' }].map(c => (
+              <div key={c.label} className="flex gap-4 md:gap-5 items-center p-4 md:p-5 px-5 md:px-6 border border-gold/10 hover:border-gold/38 hover:bg-gold/2 transition-all">
                 <span className="text-xl">{c.icon}</span>
-                <div><div className="font-mono text-[9px] tracking-[.2em] uppercase text-gold mb-1">{c.label}</div><div className="text-[14px] text-white/50">{c.val}</div></div>
+                <div><div className="font-mono text-[9px] tracking-[.2em] uppercase text-gold mb-1">{c.label}</div><div className="text-[13px] md:text-[14px] text-white/50">{c.val}</div></div>
               </div>
             ))}
           </div>
@@ -64,19 +64,19 @@ export default function Contact() {
 
         <div className="reveal-right">
           {!user && (
-            <div className="border border-gold/20 bg-gold/5 p-5 mb-6 flex items-center justify-between">
+            <div className="border border-gold/20 bg-gold/5 p-4 md:p-5 mb-6 flex items-center justify-between gap-4">
               <div>
                 <div className="font-mono text-[10px] tracking-[.2em] uppercase text-gold mb-1">Login Required</div>
                 <div className="text-[13px] text-white/50 font-light">Sign in to send us a message</div>
               </div>
-              <button onClick={() => setShowModal(true)} className="font-mono text-[10px] tracking-[.15em] uppercase text-[#060606] bg-gold px-5 py-2.5 hover:bg-gold-light transition-colors flex-shrink-0">
+              <button onClick={() => setShowModal(true)} className="font-mono text-[10px] tracking-[.15em] uppercase text-[#060606] bg-gold px-4 py-2.5 hover:bg-gold-light transition-colors flex-shrink-0">
                 Sign In →
               </button>
             </div>
           )}
 
           <div className={`flex flex-col gap-4 ${!user ? 'opacity-50 pointer-events-none select-none' : ''}`}>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-2"><label className="font-mono text-[9px] tracking-[.2em] uppercase text-white/50">Your Name</label><input className={iCls} value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="John Doe" /></div>
               <div className="flex flex-col gap-2"><label className="font-mono text-[9px] tracking-[.2em] uppercase text-white/50">Email Address</label><input className={iCls} type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="john@company.com" /></div>
             </div>
@@ -90,13 +90,13 @@ export default function Contact() {
                 {['₹10K – ₹30K','₹30K – ₹75K','₹75K – ₹2L','₹2L+'].map(b=><option key={b} style={{background:'#111'}}>{b}</option>)}
               </select>
             </div>
-            <div className="flex flex-col gap-2"><label className="font-mono text-[9px] tracking-[.2em] uppercase text-white/50">Project Details</label><textarea className={`${iCls} resize-y min-h-[130px]`} value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="Tell us about your project, goals and timeline..." /></div>
+            <div className="flex flex-col gap-2"><label className="font-mono text-[9px] tracking-[.2em] uppercase text-white/50">Project Details</label><textarea className={`${iCls} resize-y min-h-[120px]`} value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="Tell us about your project..." /></div>
           </div>
 
           {msg && <div className={`font-mono text-[11px] p-3 border mt-4 ${status==='success'?'border-green-500/30 text-green-400 bg-green-500/5':'border-red-500/30 text-red-400 bg-red-500/5'}`}>{msg}</div>}
 
           <button onClick={submit} disabled={status==='loading'}
-            className="font-mono text-[11px] tracking-[.2em] uppercase text-[#060606] bg-gold px-11 py-4 flex items-center gap-3 w-fit relative overflow-hidden group disabled:opacity-60 mt-5" data-hover>
+            className="font-mono text-[11px] tracking-[.2em] uppercase text-[#060606] bg-gold px-8 md:px-11 py-4 flex items-center gap-3 w-full md:w-fit relative overflow-hidden group disabled:opacity-60 mt-5 justify-center md:justify-start">
             <span className="absolute inset-0 bg-gold-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
             <span className="relative z-10">{!user?'Sign In to Send →':status==='loading'?'Sending...':'Send Message →'}</span>
           </button>

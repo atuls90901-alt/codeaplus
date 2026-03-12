@@ -41,39 +41,36 @@ export default function Pricing() {
   }, [])
 
   return (
-    <section ref={ref} id="pricing" className="py-32 px-16 bg-[#0a0a0a]">
-      <div className="text-center mb-18">
-        <div className="reveal font-mono text-[10px] tracking-[.3em] uppercase text-gold mb-3 flex items-center justify-center gap-3">
-          Investment
-        </div>
+    <section ref={ref} id="pricing" className="py-20 md:py-32 px-6 md:px-16 bg-[#0a0a0a]">
+      <div className="text-center mb-12 md:mb-18">
+        <div className="reveal font-mono text-[10px] tracking-[.3em] uppercase text-gold mb-3 flex items-center justify-center gap-3">Investment</div>
         <h2 className="reveal delay-1 font-cormorant text-[clamp(38px,5vw,68px)] font-light leading-[1.05]">
           Simple <em className="italic text-gold">Pricing</em>
         </h2>
-        <p className="reveal delay-2 text-[16px] font-light text-white/50 leading-[1.8] max-w-[400px] mx-auto mt-4">
+        <p className="reveal delay-2 text-[15px] md:text-[16px] font-light text-white/50 leading-[1.8] max-w-[400px] mx-auto mt-4">
           Transparent pricing, zero hidden fees.
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-px" style={{background:'rgba(201,168,76,0.1)',border:'1px solid rgba(201,168,76,0.1)'}}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{background:'rgba(201,168,76,0.1)',border:'1px solid rgba(201,168,76,0.1)'}}>
         {plans.map((plan, i) => (
           <div key={plan.name}
-            className={`reveal delay-${i} p-14 relative transition-colors duration-300 ${plan.featured ? 'bg-[#111]' : 'bg-[#0a0a0a] hover:bg-[#111]'}`}
-            data-hover
+            className={`reveal delay-${i} p-10 md:p-14 relative transition-colors duration-300 ${plan.featured ? 'bg-[#111]' : 'bg-[#0a0a0a] hover:bg-[#111]'}`}
           >
             {plan.featured && (
-              <div className="absolute top-0 right-9 font-mono text-[9px] tracking-[.15em] uppercase text-[#060606] bg-gold px-3.5 py-1.5">
+              <div className="absolute top-0 right-6 md:right-9 font-mono text-[9px] tracking-[.15em] uppercase text-[#060606] bg-gold px-3.5 py-1.5">
                 Most Popular
               </div>
             )}
             <div className="font-mono text-[10px] tracking-[.25em] uppercase text-gold mb-5">{plan.name}</div>
-            <div className="font-cormorant text-[62px] font-light leading-none mb-1.5">
-              {plan.price !== 'Custom' && <sup className="text-[26px] align-super text-gold">₹</sup>}
+            <div className="font-cormorant text-[52px] md:text-[62px] font-light leading-none mb-1.5">
+              {plan.price !== 'Custom' && <sup className="text-[22px] md:text-[26px] align-super text-gold">₹</sup>}
               {plan.price}
             </div>
-            <div className="font-mono text-[9px] tracking-[.2em] uppercase text-white/50 mb-10">{plan.period}</div>
-            <ul className="flex flex-col gap-3.5 mb-11">
+            <div className="font-mono text-[9px] tracking-[.2em] uppercase text-white/50 mb-8 md:mb-10">{plan.period}</div>
+            <ul className="flex flex-col gap-3 mb-8 md:mb-11">
               {plan.features.map(f => (
-                <li key={f.text} className={`text-[14px] font-light flex items-center gap-3 ${f.on ? 'text-white' : 'text-white/30'}`}>
+                <li key={f.text} className={`text-[13px] md:text-[14px] font-light flex items-center gap-3 ${f.on ? 'text-white' : 'text-white/30'}`}>
                   <span className="font-mono text-[12px] text-gold">—</span>
                   {f.text}
                 </li>
