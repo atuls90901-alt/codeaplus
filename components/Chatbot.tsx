@@ -1,316 +1,464 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
-import { useAuth } from '@/lib/AuthContext'
+import { useState, useRef, useEffect } from 'react'
 
 interface Message {
   role: 'user' | 'assistant'
   content: string
 }
 
-interface FormData {
-  name: string
-  email: string
-  service: string
-  budget: string
+// ══════════════════════════════════════
+//  CUTE BOT ICON — white + gold
+// ══════════════════════════════════════
+function CuteBotIcon({ size = 36 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Antenna */}
+      <line x1="32" y1="4" x2="32" y2="13" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round"/>
+      <circle cx="32" cy="4" r="3" fill="#C9A84C"/>
+
+      {/* Head — big round white/gold */}
+      <rect x="8" y="14" width="48" height="38" rx="16" fill="white" opacity="0.95"/>
+      <rect x="8" y="14" width="48" height="38" rx="16" fill="url(#botGrad)" opacity="0.12"/>
+      <rect x="8" y="14" width="48" height="38" rx="16" stroke="#C9A84C" strokeWidth="1.8"/>
+
+      {/* Ears */}
+      <rect x="3" y="26" width="6" height="12" rx="3" fill="#C9A84C" opacity="0.7"/>
+      <rect x="55" y="26" width="6" height="12" rx="3" fill="#C9A84C" opacity="0.7"/>
+
+      {/* Eyes — big cute */}
+      <circle cx="22" cy="32" r="8" fill="#C9A84C"/>
+      <circle cx="42" cy="32" r="8" fill="#C9A84C"/>
+      {/* Eye white */}
+      <circle cx="22" cy="32" r="5" fill="white"/>
+      <circle cx="42" cy="32" r="5" fill="white"/>
+      {/* Pupils */}
+      <circle cx="23" cy="32" r="3" fill="#2d1a00"/>
+      <circle cx="43" cy="32" r="3" fill="#2d1a00"/>
+      {/* Eye shine */}
+      <circle cx="24.5" cy="30.5" r="1.3" fill="white"/>
+      <circle cx="44.5" cy="30.5" r="1.3" fill="white"/>
+
+      {/* Blush cheeks */}
+      <ellipse cx="14" cy="42" rx="5" ry="3" fill="#ffb5c8" opacity="0.5"/>
+      <ellipse cx="50" cy="42" rx="5" ry="3" fill="#ffb5c8" opacity="0.5"/>
+
+      {/* Smile */}
+      <path d="M22 44 Q32 51 42 44" stroke="#C9A84C" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+
+      {/* Gradient def */}
+      <defs>
+        <linearGradient id="botGrad" x1="8" y1="14" x2="56" y2="52" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#C9A84C"/>
+          <stop offset="1" stopColor="#fff"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+// Small version for messages
+function TinyBot() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 64 64" fill="none">
+      <rect x="8" y="14" width="48" height="38" rx="16" fill="white" opacity="0.95"/>
+      <rect x="8" y="14" width="48" height="38" rx="16" stroke="#C9A84C" strokeWidth="2"/>
+      <circle cx="22" cy="32" r="8" fill="#C9A84C"/>
+      <circle cx="42" cy="32" r="8" fill="#C9A84C"/>
+      <circle cx="22" cy="32" r="5" fill="white"/>
+      <circle cx="42" cy="32" r="5" fill="white"/>
+      <circle cx="23" cy="32" r="3" fill="#2d1a00"/>
+      <circle cx="43" cy="32" r="3" fill="#2d1a00"/>
+      <circle cx="24.5" cy="30.5" r="1.3" fill="white"/>
+      <circle cx="44.5" cy="30.5" r="1.3" fill="white"/>
+      <path d="M22 44 Q32 51 42 44" stroke="#C9A84C" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+    </svg>
+  )
 }
 
 export default function Chatbot() {
-  const { user } = useAuth()
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: 'assistant',
+      content: `Hey! 👋 Welcome to CodeaPlus. I'm here to help you start your project.\n\nWhat kind of website or app are you looking to build?`
+    }
+  ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [formFilled, setFormFilled] = useState(false)
-  const [showPulse, setShowPulse] = useState(true)
+  const [showTooltip, setShowTooltip] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (open && messages.length === 0) {
-      setMessages([{
-        role: 'assistant',
-        content: `Hey! 👋 Welcome to CodeaPlus. I'm here to help you start your project.\n\nWhat kind of website or app are you looking to build?`
-      }])
-    }
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 100)
-      setShowPulse(false)
-    }
-  }, [open])
+    const check = () => setIsMobile(window.innerWidth <= 480)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, loading])
+  }, [messages])
 
-  // Lock scroll on mobile when open
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const isMobile = window.innerWidth < 640
-    if (isMobile) {
-      document.body.style.overflow = open ? 'hidden' : ''
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [open])
-
-  const fillContactForm = (formData: FormData) => {
-    const setNativeValue = (el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, value: string) => {
-      const nativeInputValueSetter =
-        Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set ||
-        Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value')?.set
-      nativeInputValueSetter?.call(el, value)
-      el.dispatchEvent(new Event('input', { bubbles: true }))
-      el.dispatchEvent(new Event('change', { bubbles: true }))
-    }
-    setTimeout(() => {
-      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
-      setTimeout(() => {
-        const nameEl = document.querySelector('input[placeholder="John Doe"]') as HTMLInputElement
-        if (nameEl) setNativeValue(nameEl, formData.name)
-        const emailEl = document.querySelector('input[placeholder="john@company.com"]') as HTMLInputElement
-        if (emailEl) setNativeValue(emailEl, formData.email)
-        const serviceEl = document.querySelector('select') as HTMLSelectElement
-        if (serviceEl) setNativeValue(serviceEl, formData.service)
-        const budgetEls = document.querySelectorAll('select')
-        if (budgetEls[1]) setNativeValue(budgetEls[1] as HTMLSelectElement, formData.budget)
-        setFormFilled(true)
-      }, 800)
-    }, 300)
-  }
+    const t = setTimeout(() => setShowTooltip(false), 5000)
+    return () => clearTimeout(t)
+  }, [])
 
   const send = async () => {
-    const text = input.trim()
-    if (!text || loading) return
-    setInput('')
-    const newMessages: Message[] = [...messages, { role: 'user', content: text }]
+    if (!input.trim() || loading) return
+    const userMsg: Message = { role: 'user', content: input.trim() }
+    const newMessages = [...messages, userMsg]
     setMessages(newMessages)
+    setInput('')
     setLoading(true)
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages })
       })
       const data = await res.json()
-      setMessages(prev => [...prev, { role: 'assistant', content: data.text }])
-      if (data.formData) fillContactForm(data.formData)
-    } catch (err: any) {
-      setMessages(prev => [...prev, { role: 'assistant', content: `Error: ${err.message}` }])
+      setMessages(prev => [...prev, { role: 'assistant', content: data.message || 'Something went wrong.' }])
+    } catch {
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Please try again.' }])
     } finally {
       setLoading(false)
     }
   }
 
+  const winStyle: React.CSSProperties = isMobile
+    ? { position: 'fixed', bottom: 0, left: 0, right: 0, height: '75vh', zIndex: 9000, borderRadius: '20px 20px 0 0', border: '1px solid rgba(201,168,76,0.25)', borderBottom: 'none' }
+    : { position: 'fixed', bottom: 108, right: 24, width: 360, height: 510, zIndex: 9000, borderRadius: 16, border: '1px solid rgba(201,168,76,0.25)' }
+
   return (
     <>
-      <style>{`
-        @keyframes pingOnce {
-          0% { transform: scale(1); opacity: 0.8; }
-          100% { transform: scale(1.8); opacity: 0; }
-        }
-        @keyframes typingDot {
-          0%,60%,100% { transform: translateY(0); opacity:0.4; }
-          30% { transform: translateY(-4px); opacity:1; }
-        }
-      `}</style>
+      {/* ── TOOLTIP ── */}
+      {!open && showTooltip && (
+        <div style={{
+          position: 'fixed',
+          bottom: isMobile ? 88 : 104,
+          right: isMobile ? 16 : 30,
+          zIndex: 9001,
+          background: 'rgba(255,255,255,0.97)',
+          border: '1.5px solid rgba(201,168,76,0.4)',
+          borderRadius: 12,
+          padding: '8px 14px',
+          fontFamily: 'monospace',
+          fontSize: 11,
+          color: '#5a3e00',
+          letterSpacing: '0.04em',
+          whiteSpace: 'nowrap',
+          animation: 'cbFadeUp 0.4s ease both',
+          pointerEvents: 'none',
+          boxShadow: '0 4px 20px rgba(201,168,76,0.15)',
+          fontWeight: 600,
+        }}>
+          ✨ Hi! Chat with me~
+          <span style={{
+            position: 'absolute', bottom: -7, right: 22,
+            width: 0, height: 0,
+            borderLeft: '7px solid transparent',
+            borderRight: '7px solid transparent',
+            borderTop: '7px solid rgba(201,168,76,0.4)',
+          }} />
+        </div>
+      )}
 
-      {/* ── Toggle Button ── */}
+      {/* ── TOGGLE BUTTON ── */}
       <button
-        onClick={() => setOpen(o => !o)}
-        className={`fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[9001] w-12 h-12 md:w-14 md:h-14 items-center justify-center transition-all duration-300 hover:scale-110 ${open ? 'hidden md:flex' : 'flex'}`}
+        onClick={() => { setOpen(o => !o); setShowTooltip(false) }}
+        aria-label={open ? 'Close chat' : 'Open chat'}
         style={{
-          background: open ? '#1a1a1a' : 'linear-gradient(135deg,#7a6028,#C9A84C)',
-          border: '1px solid rgba(201,168,76,0.3)',
+          position: 'fixed',
+          bottom: isMobile ? 18 : 24,
+          right: isMobile ? 16 : 24,
+          zIndex: 9002,
+          width: isMobile ? 62 : 68,
+          height: isMobile ? 62 : 68,
           borderRadius: '50%',
-          boxShadow: '0 8px 32px rgba(201,168,76,0.25)',
+          border: 'none',
+          background: open
+            ? 'linear-gradient(145deg, #1a1200, #0d0d0d)'
+            : 'linear-gradient(145deg, #ffffff, #fff8e8)',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: open
+            ? '0 6px 24px rgba(0,0,0,0.5), 0 0 0 2px rgba(201,168,76,0.4)'
+            : '0 8px 32px rgba(201,168,76,0.35), 0 0 0 3px rgba(201,168,76,0.2)',
+          transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+          transform: open ? 'scale(0.92)' : 'scale(1)',
+          padding: 0,
+          outline: 'none',
+        }}
+        onMouseEnter={e => {
+          if (!open) (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.1) rotate(-5deg)'
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLButtonElement).style.transform = open ? 'scale(0.92)' : 'scale(1)'
         }}
       >
-        <span style={{ fontSize: 20 }}>💬</span>
-        {showPulse && !open && (
-          <span className="absolute inset-0 rounded-full" style={{
-            border: '2px solid rgba(201,168,76,0.5)',
-            animation: 'pingOnce 2s ease-out 3',
+        {/* Pulse rings — only when closed */}
+        {!open && <>
+          <span style={{
+            position: 'absolute', inset: -5,
+            borderRadius: '50%',
+            border: '2px solid rgba(201,168,76,0.3)',
+            animation: 'cbRipple1 2s ease-out infinite',
+            pointerEvents: 'none',
           }} />
+          <span style={{
+            position: 'absolute', inset: -5,
+            borderRadius: '50%',
+            border: '2px solid rgba(201,168,76,0.15)',
+            animation: 'cbRipple1 2s ease-out 0.7s infinite',
+            pointerEvents: 'none',
+          }} />
+        </>}
+
+        {open ? (
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <line x1="5" y1="5" x2="17" y2="17" stroke="#C9A84C" strokeWidth="2.2" strokeLinecap="round"/>
+            <line x1="17" y1="5" x2="5" y2="17" stroke="#C9A84C" strokeWidth="2.2" strokeLinecap="round"/>
+          </svg>
+        ) : (
+          <CuteBotIcon size={isMobile ? 38 : 44} />
         )}
       </button>
 
-      {/* ── Mobile: fullscreen overlay ── */}
+      {/* ── CHAT WINDOW ── */}
       {open && (
-        <div className="sm:hidden fixed inset-0 z-[9000] flex flex-col" style={{ background: '#0a0a0a' }}>
+        <div style={{
+          ...winStyle,
+          display: 'flex',
+          flexDirection: 'column',
+          background: '#fafaf8',
+          overflow: 'hidden',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.2), 0 0 0 1px rgba(201,168,76,0.15)',
+          animation: isMobile ? 'cbSlideUpMobile 0.3s cubic-bezier(0.34,1.2,0.64,1) both' : 'cbSlideUp 0.28s cubic-bezier(0.34,1.2,0.64,1) both',
+        }}>
+
+          {/* Gold top bar */}
+          <div style={{ height: 3, background: 'linear-gradient(90deg, #C9A84C, #ffe08a, #C9A84C)', flexShrink: 0 }} />
+
+          {/* Mobile drag handle */}
+          {isMobile && (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 2px' }}>
+              <div style={{ width: 40, height: 4, borderRadius: 2, background: 'rgba(201,168,76,0.3)' }} />
+            </div>
+          )}
+
           {/* Header */}
           <div style={{
-            padding: '14px 16px',
-            borderBottom: '1px solid rgba(201,168,76,0.1)',
-            background: 'rgba(201,168,76,0.04)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: isMobile ? '10px 16px 12px' : '14px 18px',
+            background: 'white',
+            borderBottom: '1px solid rgba(201,168,76,0.15)',
             flexShrink: 0,
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{
-                width: 34, height: 34, borderRadius: '50%',
-                background: 'linear-gradient(135deg,#7a6028,#C9A84C)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 14, flexShrink: 0,
-              }}>✦</div>
-              <div>
-                <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: 14, color: 'rgba(240,236,228,0.9)', fontWeight: 500 }}>
-                  CodeaPlus Assistant
-                </div>
-                <div style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.15em', color: 'rgba(201,168,76,0.7)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-                  Online
-                </div>
+            {/* Bot avatar with glow */}
+            <div style={{
+              width: 42, height: 42, borderRadius: '50%',
+              background: 'linear-gradient(145deg, #fffdf5, #fff8e0)',
+              border: '2px solid rgba(201,168,76,0.4)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+              boxShadow: '0 0 12px rgba(201,168,76,0.2)',
+            }}>
+              <CuteBotIcon size={28} />
+            </div>
+            <div>
+              <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: 16, color: '#1a1200', fontWeight: 600 }}>
+                CodeaPlus Bot
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#4ade80', display: 'inline-block', boxShadow: '0 0 6px rgba(74,222,128,0.6)', animation: 'cbBlink 2s ease-in-out infinite' }} />
+                <span style={{ fontFamily: 'monospace', fontSize: 9, color: '#a07830', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Online & Ready</span>
               </div>
             </div>
             <button
               onClick={() => setOpen(false)}
-              style={{ color: 'rgba(240,236,228,0.5)', fontSize: 20, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
-            >✕</button>
+              style={{ marginLeft: 'auto', background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '50%', color: '#a07830', cursor: 'pointer', fontSize: 16, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, transition: 'all 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(201,168,76,0.2)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(201,168,76,0.1)')}
+            >×</button>
           </div>
 
           {/* Messages */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <ChatMessages messages={messages} loading={loading} formFilled={formFilled} bottomRef={bottomRef} />
+          <div style={{
+            flex: 1, overflowY: 'auto',
+            padding: isMobile ? '14px 12px 8px' : '16px 14px 8px',
+            display: 'flex', flexDirection: 'column', gap: 14,
+            background: '#f8f6f0',
+          }}>
+            {messages.map((m, i) => (
+              <div key={i} style={{
+                display: 'flex',
+                justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start',
+                gap: 8,
+                alignItems: 'flex-end',
+              }}>
+                {m.role === 'assistant' && (
+                  <div style={{
+                    width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                    background: 'linear-gradient(145deg, #fffdf5, #fff8e0)',
+                    border: '1.5px solid rgba(201,168,76,0.35)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(201,168,76,0.15)',
+                  }}>
+                    <TinyBot />
+                  </div>
+                )}
+                <div style={{
+                  maxWidth: '76%',
+                  padding: '10px 14px',
+                  borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                  background: m.role === 'user'
+                    ? 'linear-gradient(135deg, #C9A84C, #b8932e)'
+                    : 'white',
+                  border: m.role === 'user' ? 'none' : '1px solid rgba(201,168,76,0.2)',
+                  color: m.role === 'user' ? 'white' : '#2d1a00',
+                  fontSize: isMobile ? 14 : 13.5,
+                  lineHeight: 1.65,
+                  fontFamily: 'var(--font-outfit, sans-serif)',
+                  whiteSpace: 'pre-wrap',
+                  fontWeight: m.role === 'user' ? 500 : 400,
+                  boxShadow: m.role === 'user'
+                    ? '0 4px 16px rgba(201,168,76,0.3)'
+                    : '0 2px 8px rgba(0,0,0,0.06)',
+                }}>
+                  {m.content}
+                </div>
+              </div>
+            ))}
+
+            {loading && (
+              <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: '50%',
+                  background: 'linear-gradient(145deg, #fffdf5, #fff8e0)',
+                  border: '1.5px solid rgba(201,168,76,0.35)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
+                  <TinyBot />
+                </div>
+                <div style={{
+                  padding: '12px 16px',
+                  borderRadius: '16px 16px 16px 4px',
+                  background: 'white',
+                  border: '1px solid rgba(201,168,76,0.2)',
+                  display: 'flex', gap: 5, alignItems: 'center',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                }}>
+                  {[0,1,2].map(i => (
+                    <span key={i} style={{
+                      width: 7, height: 7, borderRadius: '50%',
+                      background: '#C9A84C',
+                      animation: `cbDot 1.2s ease-in-out ${i*0.2}s infinite`,
+                      display: 'inline-block',
+                    }} />
+                  ))}
+                </div>
+              </div>
+            )}
+            <div ref={bottomRef} />
           </div>
 
           {/* Input */}
-          <ChatInput input={input} setInput={setInput} send={send} loading={loading} inputRef={inputRef} />
-        </div>
-      )}
-
-      {/* ── Desktop: floating window ── */}
-      <div
-        className="hidden sm:flex fixed flex-col z-[9000]"
-        style={{
-          bottom: 96,
-          right: 32,
-          width: 360,
-          height: 480,
-          background: '#0a0a0a',
-          border: '1px solid rgba(201,168,76,0.2)',
-          borderRadius: 16,
-          boxShadow: '0 24px 64px rgba(0,0,0,0.8)',
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? 'all' : 'none',
-          transform: open ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.97)',
-          transition: 'all 0.25s ease',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Header */}
-        <div style={{
-          padding: '14px 18px',
-          borderBottom: '1px solid rgba(201,168,76,0.1)',
-          background: 'rgba(201,168,76,0.04)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          flexShrink: 0,
-        }}>
           <div style={{
-            width: 36, height: 36, borderRadius: '50%',
-            background: 'linear-gradient(135deg,#7a6028,#C9A84C)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 16, flexShrink: 0,
-          }}>✦</div>
-          <div>
-            <div style={{ fontFamily: 'var(--font-cormorant,serif)', fontSize: 15, color: 'rgba(240,236,228,0.9)', fontWeight: 500 }}>
-              CodeaPlus Assistant
-            </div>
-            <div style={{ fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.15em', color: 'rgba(201,168,76,0.7)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-              Online
-            </div>
-          </div>
-        </div>
-
-        {/* Messages */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <ChatMessages messages={messages} loading={loading} formFilled={formFilled} bottomRef={bottomRef} />
-        </div>
-
-        {/* Input */}
-        <ChatInput input={input} setInput={setInput} send={send} loading={loading} inputRef={inputRef} />
-      </div>
-    </>
-  )
-}
-
-// ── Shared subcomponents ──
-
-function ChatMessages({ messages, loading, formFilled, bottomRef }: {
-  messages: Message[]
-  loading: boolean
-  formFilled: boolean
-  bottomRef: React.RefObject<HTMLDivElement>
-}) {
-  return (
-    <>
-      {messages.map((m, i) => (
-        <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-          <div style={{
-            maxWidth: '82%',
-            padding: '10px 14px',
-            borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-            background: m.role === 'user'
-              ? 'linear-gradient(135deg,rgba(201,168,76,0.8),rgba(201,168,76,0.6))'
-              : 'rgba(255,255,255,0.05)',
-            border: m.role === 'assistant' ? '1px solid rgba(201,168,76,0.1)' : 'none',
-            color: m.role === 'user' ? '#060606' : 'rgba(240,236,228,0.85)',
-            fontSize: 13,
-            fontWeight: m.role === 'user' ? 500 : 300,
-            lineHeight: 1.6,
-            whiteSpace: 'pre-wrap',
+            padding: isMobile ? '10px 12px 22px' : '12px 14px',
+            borderTop: '1px solid rgba(201,168,76,0.15)',
+            background: 'white',
+            display: 'flex', gap: 8, alignItems: 'center',
+            flexShrink: 0,
           }}>
-            {m.content}
-          </div>
-        </div>
-      ))}
-
-      {loading && (
-        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-          <div style={{ padding: '10px 16px', borderRadius: '16px 16px 16px 4px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,168,76,0.1)', display: 'flex', gap: 4, alignItems: 'center' }}>
-            {[0, 1, 2].map(i => (
-              <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: 'rgba(201,168,76,0.6)', animation: 'typingDot 1.2s ease infinite', animationDelay: `${i * 0.2}s` }} />
-            ))}
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
+              placeholder="Say something cute... 🌟"
+              disabled={loading}
+              style={{
+                flex: 1,
+                background: '#f8f6f0',
+                border: '1.5px solid rgba(201,168,76,0.2)',
+                borderRadius: 24,
+                padding: isMobile ? '11px 16px' : '9px 14px',
+                color: '#2d1a00',
+                fontSize: isMobile ? 14 : 13,
+                fontFamily: 'var(--font-outfit, sans-serif)',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+              }}
+              onFocus={e => (e.target.style.borderColor = 'rgba(201,168,76,0.6)')}
+              onBlur={e => (e.target.style.borderColor = 'rgba(201,168,76,0.2)')}
+            />
+            <button
+              onClick={send}
+              disabled={loading || !input.trim()}
+              style={{
+                width: isMobile ? 44 : 40,
+                height: isMobile ? 44 : 40,
+                background: input.trim() && !loading
+                  ? 'linear-gradient(135deg, #C9A84C, #b8932e)'
+                  : 'rgba(201,168,76,0.15)',
+                border: 'none',
+                borderRadius: '50%',
+                cursor: input.trim() && !loading ? 'pointer' : 'default',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all 0.2s',
+                flexShrink: 0,
+                boxShadow: input.trim() && !loading ? '0 4px 12px rgba(201,168,76,0.4)' : 'none',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2 8h10M8 3l5 5-5 5"
+                  stroke={input.trim() && !loading ? 'white' : '#C9A84C'}
+                  strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
         </div>
       )}
 
-      {formFilled && (
-        <div style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', fontSize: 12, color: 'rgba(34,197,94,0.9)', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
-          ✓ Contact form filled! Please review and submit.
-        </div>
+      {/* Mobile backdrop */}
+      {open && isMobile && (
+        <div onClick={() => setOpen(false)} style={{
+          position: 'fixed', inset: 0, zIndex: 8999,
+          background: 'rgba(0,0,0,0.4)',
+          backdropFilter: 'blur(3px)',
+          animation: 'cbFadeUp 0.2s ease both',
+        }} />
       )}
 
-      <div ref={bottomRef} />
+      <style>{`
+        @keyframes cbFadeUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cbSlideUp {
+          from { opacity: 0; transform: translateY(20px) scale(0.95); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes cbSlideUpMobile {
+          from { transform: translateY(100%); }
+          to   { transform: translateY(0); }
+        }
+        @keyframes cbRipple1 {
+          0%   { transform: scale(1); opacity: 0.6; }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
+        @keyframes cbDot {
+          0%, 80%, 100% { transform: scale(0.65); opacity: 0.35; }
+          40% { transform: scale(1.15); opacity: 1; }
+        }
+        @keyframes cbBlink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
     </>
-  )
-}
-
-function ChatInput({ input, setInput, send, loading, inputRef }: {
-  input: string
-  setInput: (v: string) => void
-  send: () => void
-  loading: boolean
-  inputRef: React.RefObject<HTMLInputElement>
-}) {
-  return (
-    <div style={{ padding: '12px', borderTop: '1px solid rgba(201,168,76,0.1)', display: 'flex', gap: 8, flexShrink: 0, background: 'rgba(0,0,0,0.3)' }}>
-      <input
-        ref={inputRef}
-        value={input}
-        onChange={e => setInput(e.target.value)}
-        onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-        placeholder="Type your message..."
-        style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 10, padding: '10px 14px', color: 'rgba(240,236,228,0.9)', fontSize: 13, outline: 'none', fontFamily: 'inherit' }}
-      />
-      <button
-        onClick={send}
-        disabled={loading || !input.trim()}
-        style={{ width: 40, height: 40, borderRadius: 10, background: input.trim() ? 'linear-gradient(135deg,#7a6028,#C9A84C)' : 'rgba(255,255,255,0.05)', border: '1px solid rgba(201,168,76,0.2)', color: input.trim() ? '#060606' : 'rgba(201,168,76,0.3)', fontSize: 16, cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0 }}
-      >↑</button>
-    </div>
   )
 }
