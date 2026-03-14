@@ -25,7 +25,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL('https://codeaplus.pro'),
   verification: {
-    google: 'googleadb21ea045b6f273',
+    google: 'zDGGCEcF8_R4GssRkn6VQKtMTFUOiY_j3YW51Tg7oeQ',
   },
   icons: {
     icon: '/favicon.ico',
