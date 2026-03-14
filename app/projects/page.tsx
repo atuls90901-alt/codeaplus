@@ -17,6 +17,12 @@ export const metadata = {
   description: 'Explore all projects built by CodeaPlus.',
 }
 
+const stats = (count: number) => [
+  { num: count || '—', label: 'Projects Delivered' },
+  { num: '100%',       label: 'Client Satisfaction' },
+  { num: '3+',         label: 'Years Experience' },
+]
+
 export default async function ProjectsPage() {
   const { data: projects } = await supabase
     .from('projects')
@@ -29,167 +35,68 @@ export default async function ProjectsPage() {
     <>
       <Navbar />
 
-      <main style={{ background: '#060606', minHeight: '100vh' }}>
+      <main className="bg-bg-primary min-h-screen">
 
-        {/* Hero */}
-        <section className="ph-hero">
-          <div className="ph-wrap">
-            <span className="ph-eyebrow">Our Work</span>
-            <h1 className="ph-title">
-              All <em>Projects</em>
-            </h1>
-            <p className="ph-sub">
-              Every project tells a story of growth. Here's the complete collection of what we've built.
-            </p>
-            <div className="ph-stats">
-              {[
-                { num: list.length || '—', label: 'Projects Delivered' },
-                { num: '100%', label: 'Client Satisfaction' },
-                { num: '3+', label: 'Years Experience' },
-              ].map(s => (
-                <div key={s.label} className="ph-stat">
-                  <div className="ph-stat-num">{s.num}</div>
-                  <div className="ph-stat-label">{s.label}</div>
+        {/* ── Hero ── */}
+        <section className="pt-32 md:pt-36 pb-12 md:pb-16 px-4 sm:px-8 md:px-16 max-w-[1400px] mx-auto">
+
+          <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-gold block mb-4">
+            Our Work
+          </span>
+
+          <h1 className="font-cormorant font-light text-[clamp(52px,9vw,100px)] leading-none text-white mb-5">
+            All <em className="text-gold italic">Projects</em>
+          </h1>
+
+          <p className="font-outfit text-[14px] md:text-[15px] text-white/38 max-w-[460px] leading-[1.75] mb-10 md:mb-14">
+            Every project tells a story of growth. Here's the complete collection of what we've built.
+          </p>
+
+          {/* Stats */}
+          <div className="flex flex-wrap gap-7 md:gap-14 pt-8 md:pt-10 border-t border-gold/10">
+            {stats(list.length).map(s => (
+              <div key={s.label} className="flex-1 basis-[30%] min-w-[80px]">
+                <div className="font-cormorant text-[38px] md:text-[52px] font-semibold text-gold leading-none">
+                  {s.num}
                 </div>
-              ))}
-            </div>
+                <div className="font-mono text-[9px] tracking-[0.15em] uppercase text-white/28 mt-1.5">
+                  {s.label}
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
-        <div className="ph-divider" />
+        {/* Divider */}
+        <div className="border-t border-gold/[0.07] mx-4 sm:mx-8 md:mx-16" />
 
-        {/* Grid — client component for 3D */}
-        <div className="ph-wrap" style={{ paddingTop: '72px', paddingBottom: '80px' }}>
+        {/* ── Projects Grid ── */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 md:px-16 pt-14 md:pt-20 pb-16 md:pb-24">
           <ProjectsGrid projects={list} />
         </div>
 
-        {/* CTA */}
-        <section className="ph-cta">
-          <span className="ph-eyebrow">Ready to Build?</span>
-          <h2 className="ph-cta-title">
-            Your project could be <em>next.</em>
+        {/* ── CTA ── */}
+        <section className="border-t border-gold/[0.07] px-4 sm:px-8 md:px-16 py-16 md:py-24 flex flex-col items-center text-center">
+
+          <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-gold block mb-5">
+            Ready to Build?
+          </span>
+
+          <h2 className="font-cormorant font-light text-[clamp(36px,5vw,76px)] text-white leading-tight mb-10">
+            Your project could be <em className="text-gold italic">next.</em>
           </h2>
-          <Link href="/#contact" className="ph-cta-btn">Start a Project</Link>
+
+          <Link href="/#contact"
+            className="relative overflow-hidden group inline-flex items-center justify-center font-mono text-[10px] tracking-[0.22em] uppercase text-bg-primary bg-gold px-10 md:px-14 py-4 w-full sm:w-auto max-w-[320px] hover:opacity-90 transition-all hover:-translate-y-0.5">
+            <span className="absolute inset-0 bg-gold-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+            <span className="relative z-10">Start a Project →</span>
+          </Link>
+
         </section>
 
       </main>
 
       <Footer />
-
-      <style>{`
-        .ph-hero { padding-top: 140px; padding-bottom: 64px; }
-        .ph-wrap {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding-left: 64px;
-          padding-right: 64px;
-        }
-        .ph-eyebrow {
-          display: inline-block;
-          font-family: var(--font-mono);
-          font-size: 10px;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-          color: #C9A84C;
-          margin-bottom: 16px;
-        }
-        .ph-title {
-          font-family: var(--font-cormorant);
-          font-size: clamp(52px, 9vw, 100px);
-          font-weight: 300;
-          color: #fff;
-          line-height: 1;
-          margin: 0 0 20px;
-        }
-        .ph-title em { color: #C9A84C; font-style: italic; }
-        .ph-sub {
-          font-family: var(--font-outfit);
-          font-size: 15px;
-          color: rgba(255,255,255,0.38);
-          max-width: 460px;
-          line-height: 1.75;
-          margin: 0 0 52px;
-        }
-        .ph-stats {
-          display: flex;
-          gap: 56px;
-          flex-wrap: wrap;
-          padding-top: 40px;
-          border-top: 1px solid rgba(201,168,76,0.1);
-        }
-        .ph-stat-num {
-          font-family: var(--font-cormorant);
-          font-size: 52px;
-          font-weight: 600;
-          color: #C9A84C;
-          line-height: 1;
-        }
-        .ph-stat-label {
-          font-family: var(--font-mono);
-          font-size: 9px;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.28);
-          margin-top: 6px;
-        }
-        .ph-divider {
-          border-top: 1px solid rgba(201,168,76,0.07);
-          margin: 0 64px;
-        }
-        .ph-cta {
-          padding: 100px 64px;
-          text-align: center;
-          border-top: 1px solid rgba(201,168,76,0.07);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        .ph-cta-title {
-          font-family: var(--font-cormorant);
-          font-size: clamp(36px, 5vw, 76px);
-          font-weight: 300;
-          color: #fff;
-          margin: 0 0 40px;
-        }
-        .ph-cta-title em { color: #C9A84C; font-style: italic; }
-        .ph-cta-btn {
-          display: inline-flex;
-          align-items: center;
-          font-family: var(--font-mono);
-          font-size: 10px;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: #060606;
-          background: #C9A84C;
-          padding: 18px 52px;
-          text-decoration: none;
-          transition: opacity 0.3s, transform 0.3s;
-        }
-        .ph-cta-btn:hover { opacity: 0.85; transform: translateY(-2px); }
-
-        /* TABLET */
-        @media (max-width: 1024px) {
-          .ph-wrap { padding-left: 32px; padding-right: 32px; }
-          .ph-divider { margin: 0 32px; }
-          .ph-cta { padding: 80px 32px; }
-        }
-        /* MOBILE */
-        @media (max-width: 768px) {
-          .ph-hero { padding-top: 100px; padding-bottom: 40px; }
-          .ph-wrap { padding-left: 20px; padding-right: 20px; }
-          .ph-title { font-size: clamp(44px, 12vw, 64px); }
-          .ph-sub { font-size: 14px; margin-bottom: 36px; }
-          .ph-stats { gap: 28px; padding-top: 28px; }
-          .ph-stat-num { font-size: 38px; }
-          .ph-divider { margin: 0 20px; }
-          .ph-cta { padding: 60px 20px; }
-          .ph-cta-btn { padding: 16px 36px; width: 100%; justify-content: center; }
-        }
-        @media (max-width: 480px) {
-          .ph-wrap { padding-left: 16px; padding-right: 16px; }
-          .ph-stat { flex: 1 1 40%; }
-        }
-      `}</style>
     </>
   )
 }

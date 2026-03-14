@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 export default function Loader() {
-  const [pct, setPct] = useState(0)
+  const [pct,  setPct]  = useState(0)
   const [gone, setGone] = useState(false)
 
   useEffect(() => {
@@ -22,29 +22,27 @@ export default function Loader() {
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center px-6"
-      style={{
-        background: '#060606',
-        transition: 'opacity 0.8s ease',
-        opacity: pct >= 100 ? 0 : 1,
-      }}
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center px-6 bg-bg-primary transition-opacity duration-700"
+      style={{ opacity: pct >= 100 ? 0 : 1 }}
     >
-      <div
-        className="font-cormorant text-4xl md:text-5xl font-light tracking-widest text-center"
-        style={{ animation: 'fadeUp 0.6s ease 0.2s both' }}
-      >
+      {/* Logo */}
+      <div className="font-cormorant text-4xl md:text-5xl font-light tracking-widest text-center animate-fade-up"
+        style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
         CodeaPlus<span className="text-gold">.</span>
       </div>
+
+      {/* Progress bar */}
       <div className="w-48 md:w-60 h-px bg-white/5 mt-8 md:mt-9 relative overflow-hidden">
         <div
-          className="absolute top-0 left-0 h-full"
+          className="absolute top-0 left-0 h-full transition-[width] duration-[50ms] linear"
           style={{
             width: `${pct}%`,
             background: 'linear-gradient(90deg,#7a6028,#C9A84C,#E8C96A)',
-            transition: 'width 0.05s linear',
           }}
         />
       </div>
+
+      {/* Percentage */}
       <div className="font-mono text-[11px] tracking-widest text-gold mt-4">
         {pct}%
       </div>

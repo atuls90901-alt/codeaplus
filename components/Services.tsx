@@ -1,77 +1,150 @@
 'use client'
 import { useEffect, useRef } from 'react'
 
-export default function About() {
+const services = [
+  {
+    num: '01',
+    icon: '🌐',
+    title: 'Website Design & Development',
+    desc: 'Premium responsive websites with stunning UI/UX. Built with Next.js for blazing speed and SEO.',
+    tags: ['Next.js', 'Tailwind', 'CMS'],
+  },
+  {
+    num: '02',
+    icon: '⚙️',
+    title: 'Full Stack Web App',
+    desc: 'End-to-end MERN stack applications with auth, dashboards, APIs and admin panels.',
+    tags: ['React', 'Node.js', 'MongoDB'],
+  },
+  {
+    num: '03',
+    icon: '🛒',
+    title: 'E-Commerce Store',
+    desc: 'High-converting online stores with payment gateway, inventory and order management.',
+    tags: ['Razorpay', 'Stripe', 'Cart'],
+  },
+  {
+    num: '04',
+    icon: '🔌',
+    title: 'API Development',
+    desc: 'Robust REST & GraphQL APIs with proper auth, rate limiting and documentation.',
+    tags: ['REST', 'GraphQL', 'JWT'],
+  },
+  {
+    num: '05',
+    icon: '🛠️',
+    title: 'Website Maintenance',
+    desc: 'Regular updates, performance optimization, bug fixes and 24/7 uptime monitoring.',
+    tags: ['Support', 'Updates', 'Monitoring'],
+  },
+  {
+    num: '06',
+    icon: '📱',
+    title: 'UI/UX Design',
+    desc: 'Beautiful, conversion-focused designs with Figma prototypes before development begins.',
+    tags: ['Figma', 'Prototype', 'Design'],
+  },
+]
+
+export default function Services() {
   const ref = useRef<HTMLElement>(null)
+
   useEffect(() => {
     const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') })
-    }, { threshold: 0.1 })
-    ref.current?.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => obs.observe(el))
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') })
+    }, { threshold: 0.08 })
+    ref.current?.querySelectorAll('.reveal').forEach(el => obs.observe(el))
     return () => obs.disconnect()
   }, [])
 
   return (
-    <section ref={ref} id="about" className="py-20 md:py-32 px-6 md:px-16 bg-[#0a0a0a] grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 items-center">
-      {/* Visual */}
-      <div className="reveal-left relative">
-        <div className="bg-[#111] border border-gold/10 p-6 md:p-9 relative overflow-hidden min-h-[340px] md:min-h-[460px]">
-          <div className="bg-[#0c0c0c] border border-white/5 rounded-md overflow-hidden">
-            <div className="h-[30px] bg-white/3 border-b border-white/4 flex items-center px-3 gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-400/60" />
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" />
-              <div className="w-2.5 h-2.5 rounded-full bg-green-400/60" />
-            </div>
-            <div className="p-4 md:p-5 font-mono text-[11px] md:text-[12px] leading-[2]">
-              <span className="text-white/25">{`// Crafting your vision`}</span><br/>
-              <span className="text-blue-300">const</span> <span className="text-white/90">project</span> = <span className="text-blue-300">await</span> <span className="text-orange-300">studio</span>.<span className="text-orange-300">create</span>{'({'}<br/>
-              &nbsp;&nbsp;<span className="text-white/90">stack</span>: [<span className="text-green-300">'Next.js'</span>, <span className="text-green-300">'Node'</span>],<br/>
-              &nbsp;&nbsp;<span className="text-white/90">db</span>: <span className="text-green-300">'MongoDB'</span>,<br/>
-              &nbsp;&nbsp;<span className="text-white/90">deploy</span>: <span className="text-green-300">'Vercel'</span><br/>
-              {'}'});<br/><br/>
-              <span className="text-white/25">{`// Result ✓`}</span><br/>
-              <span className="text-blue-300">return</span> {'{'}<br/>
-              &nbsp;&nbsp;<span className="text-white/90">quality</span>: <span className="text-gold">'exceptional'</span>,<br/>
-              &nbsp;&nbsp;<span className="text-white/90">client</span>: <span className="text-gold">'happy'</span>
-              <span className="inline-block w-0.5 h-3.5 bg-gold ml-0.5 align-middle" style={{animation:'blink 1s infinite'}} /><br/>
-              {'}'}; 
-            </div>
+    <section ref={ref} id="services" className="bg-bg-secondary py-20 md:py-32 px-4 sm:px-8 md:px-16">
+
+      {/* ── Header ── */}
+      <div className="reveal flex flex-col sm:flex-row justify-between items-start sm:items-end gap-5 mb-10 md:mb-16 flex-wrap">
+        <div>
+          <div className="font-mono text-[10px] tracking-[.3em] uppercase text-gold mb-3 flex items-center gap-3">
+            What We Do
+            <span className="w-10 h-px bg-gold/20" />
           </div>
+          <h2 className="font-cormorant text-[clamp(36px,5vw,68px)] font-light leading-[1.05] text-white">
+            Our <em className="italic text-gold">Services</em>
+          </h2>
         </div>
-        <div className="absolute -bottom-5 -right-5 w-[100px] h-[100px] md:w-[136px] md:h-[136px] bg-gold border-4 border-[#0a0a0a] flex flex-col items-center justify-center z-10">
-          <div className="font-cormorant text-[32px] md:text-[42px] font-light text-[#060606] leading-none">3+</div>
-          <div className="font-mono text-[8px] md:text-[9px] tracking-[.1em] uppercase text-[#060606] text-center mt-1">Years of<br/>Excellence</div>
-        </div>
+        <p className="text-[13px] md:text-[14px] text-white/35 font-light leading-[1.7] max-w-[260px] sm:text-right">
+          Everything you need to build and grow your digital presence.
+        </p>
       </div>
 
-      {/* Content */}
-      <div className="reveal-right mt-8 md:mt-0">
-        <div className="font-mono text-[10px] tracking-[.3em] uppercase text-gold mb-3 flex items-center gap-3">
-          Who We Are <span className="flex-1 max-w-[50px] h-px bg-gold/10" />
-        </div>
-        <h2 className="font-cormorant text-[clamp(38px,5vw,68px)] font-light leading-[1.05] mb-5">
-          Built by <em className="italic text-gold">Developers,</em><br/>for Business
-        </h2>
-        <p className="text-[15px] md:text-[16px] font-light text-white/50 leading-[1.8]">
-          We're a boutique full-stack studio. We don't just code — we engineer digital products that solve real problems and drive measurable growth.
-        </p>
-        <div className="flex flex-col gap-4 mt-8 md:mt-10">
-          {[
-            { icon:'⚡', title:'Lightning Fast Delivery', desc:'Most projects shipped in 2–4 weeks without sacrificing quality.' },
-            { icon:'🔒', title:'Security First', desc:'Enterprise-grade security baked into every layer.' },
-            { icon:'♾', title:'Built to Scale', desc:'Architecture designed to grow from 100 to 1,000,000 users.' },
-          ].map(f => (
-            <div key={f.title} className="flex gap-4 md:gap-5 items-start p-5 md:p-6 border border-gold/10 hover:border-gold/38 hover:bg-gold/2 transition-all group relative overflow-hidden">
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gold scale-y-0 group-hover:scale-y-100 transition-transform duration-300" />
-              <span className="text-xl mt-0.5">{f.icon}</span>
-              <div>
-                <h4 className="text-[14px] md:text-[15px] font-medium mb-1">{f.title}</h4>
-                <p className="text-[13px] text-white/50 font-light leading-[1.65]">{f.desc}</p>
-              </div>
+      {/* ── Services Grid ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px"
+        style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.08)' }}>
+        {services.map((s, i) => (
+          <div key={s.num}
+            className={`reveal delay-${i % 3} group relative bg-bg-secondary hover:bg-surface
+              p-6 sm:p-7 md:p-8 transition-colors duration-300 overflow-hidden`}>
+
+            {/* Hover gold left bar */}
+            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gold scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center" />
+
+            {/* Number */}
+            <div className="font-mono text-[10px] text-gold/35 tracking-[.1em] mb-4">
+              {s.num}
             </div>
-          ))}
-        </div>
+
+            {/* Icon + Title */}
+            <div className="flex items-start gap-3 mb-3">
+              <span className="text-2xl flex-shrink-0 mt-0.5">{s.icon}</span>
+              <h3 className="font-cormorant text-[20px] md:text-[22px] font-light text-white/90 leading-tight
+                group-hover:text-white transition-colors">
+                {s.title}
+              </h3>
+            </div>
+
+            {/* Desc */}
+            <p className="text-[13px] font-light text-white/45 leading-[1.7] mb-5
+              group-hover:text-white/60 transition-colors">
+              {s.desc}
+            </p>
+
+            {/* Tags */}
+            <div className="flex flex-wrap gap-1.5">
+              {s.tags.map(tag => (
+                <span key={tag}
+                  className="font-mono text-[9px] tracking-[.1em] uppercase
+                    text-white/25 bg-white/[0.04] border border-white/[0.06]
+                    group-hover:border-gold/15 group-hover:text-white/40
+                    px-2 py-1 transition-colors duration-300">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Hover arrow */}
+            <div className="absolute bottom-6 right-6 text-gold/0 group-hover:text-gold/50
+              text-sm font-mono transition-all duration-300 translate-x-1 group-hover:translate-x-0">
+              →
+            </div>
+          </div>
+        ))}
       </div>
+
+      {/* ── CTA ── */}
+      <div className="reveal text-center mt-10 md:mt-14">
+        <p className="text-[14px] text-white/35 font-light mb-5">
+          Not sure what you need? Let's figure it out together.
+        </p>
+        <a href="#contact"
+          className="relative overflow-hidden group inline-flex items-center justify-center
+            font-mono text-[10px] tracking-[.22em] uppercase
+            text-bg-primary bg-gold px-10 py-4
+            w-full sm:w-auto max-w-[300px]
+            hover:opacity-90 transition-opacity">
+          <span className="absolute inset-0 bg-gold-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+          <span className="relative z-10">Get a Free Quote →</span>
+        </a>
+      </div>
+
     </section>
   )
 }
