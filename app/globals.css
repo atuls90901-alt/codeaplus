@@ -248,7 +248,6 @@ body::after {
 
 /* =============================================
    3D PORTFOLIO CARD — Card3D component
-   (child selectors + CSS vars — can't use Tailwind)
    ============================================= */
 .c3d {
   position: relative;
@@ -262,11 +261,24 @@ body::after {
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 .c3d:hover {
-  box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 40px rgba(201,168,76,0.06), 0 0 0 1px rgba(201,168,76,0.2);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 40px rgba(201,168,76,0.08), 0 0 0 1px rgba(201,168,76,0.25);
 }
+
+/* ── IMAGE — bright & vivid ── */
 .c3d-bg { position: absolute; inset: 0; }
-.c3d-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: opacity 0.4s ease, transform 0.6s ease; }
-.c3d:hover .c3d-img { opacity: 0.75; transform: scale(1.06); }
+.c3d-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.92;                              /* was 0.6 — much brighter */
+  filter: brightness(1.05) contrast(1.08) saturate(1.12);
+  transition: opacity 0.4s ease, transform 0.6s ease, filter 0.4s ease;
+}
+.c3d:hover .c3d-img {
+  opacity: 1;                                 /* was 0.75 — full brightness on hover */
+  filter: brightness(1.1) contrast(1.1) saturate(1.18);
+  transform: scale(1.06);
+}
+
 .c3d-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 .c3d-num {
   font-family: var(--font-cormorant);
@@ -278,18 +290,33 @@ body::after {
   transition: opacity 0.4s;
 }
 .c3d:hover .c3d-num { opacity: 0.2; }
+
+/* ── OVERLAY — only dark at bottom for text legibility ── */
 .c3d-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(6,6,6,0.97) 0%, rgba(6,6,6,0.55) 40%, rgba(6,6,6,0.1) 75%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(6,6,6,0.96) 0%,
+    rgba(6,6,6,0.55) 30%,
+    rgba(6,6,6,0.08) 55%,
+    transparent 100%
+  );
   transition: background 0.3s;
 }
 .c3d:hover .c3d-overlay {
-  background: linear-gradient(to top, rgba(6,6,6,0.97) 0%, rgba(6,6,6,0.6) 45%, rgba(6,6,6,0.15) 75%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(6,6,6,0.96) 0%,
+    rgba(6,6,6,0.58) 35%,
+    rgba(6,6,6,0.06) 58%,
+    transparent 100%
+  );
 }
+
 .c3d-glare { position: absolute; inset: 0; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 3; border-radius: inherit; }
 .c3d-border { position: absolute; inset: 0; border: 1px solid rgba(201,168,76,0.08); border-radius: inherit; pointer-events: none; z-index: 4; transition: border-color 0.3s; }
-.c3d:hover .c3d-border { border-color: rgba(201,168,76,0.25); box-shadow: inset 0 0 30px rgba(201,168,76,0.04); }
+.c3d:hover .c3d-border { border-color: rgba(201,168,76,0.28); box-shadow: inset 0 0 30px rgba(201,168,76,0.05); }
 .c3d-badge {
   position: absolute;
   top: 20px; left: 20px;
@@ -301,24 +328,24 @@ body::after {
   color: var(--accent);
   border: 1px solid var(--accent);
   padding: 4px 10px;
-  opacity: 0.8;
-  backdrop-filter: blur(8px);
-  background: rgba(6,6,6,0.4);
+  opacity: 1;
+  backdrop-filter: blur(12px);
+  background: rgba(6,6,6,0.75);
   transition: opacity 0.3s, transform 0.3s;
 }
 .c3d:hover .c3d-badge { opacity: 1; transform: translateY(-2px); }
-.c3d-index { position: absolute; top: 20px; right: 20px; z-index: 5; font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.15); letter-spacing: 0.05em; }
+.c3d-index { position: absolute; top: 20px; right: 20px; z-index: 5; font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.2); letter-spacing: 0.05em; }
 .c3d-lines { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .c3d-line { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, rgba(201,168,76,0.08), transparent); opacity: 0; transition: opacity 0.4s; }
 .c3d:hover .c3d-line { opacity: 1; }
 .c3d-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 5; transition: transform 0.1s ease-out; will-change: transform; }
 .c3d-title { font-family: var(--font-cormorant); font-size: clamp(20px,2vw,28px); font-weight: 400; color: #fff; margin: 0 0 8px; line-height: 1.2; transition: color 0.3s; }
-.c3d-desc { font-family: var(--font-outfit); font-size: 13px; color: rgba(255,255,255,0.42); line-height: 1.65; margin: 0 0 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s; }
-.c3d:hover .c3d-desc { color: rgba(255,255,255,0.58); }
+.c3d-desc { font-family: var(--font-outfit); font-size: 13px; color: rgba(255,255,255,0.48); line-height: 1.65; margin: 0 0 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s; }
+.c3d:hover .c3d-desc { color: rgba(255,255,255,0.65); }
 .c3d-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .c3d-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.c3d-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06); padding: 3px 8px; transition: border-color 0.3s, color 0.3s; }
-.c3d:hover .c3d-tag { border-color: rgba(201,168,76,0.15); color: rgba(255,255,255,0.45); }
+.c3d-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.32); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); padding: 3px 8px; transition: border-color 0.3s, color 0.3s; }
+.c3d:hover .c3d-tag { border-color: rgba(201,168,76,0.18); color: rgba(255,255,255,0.5); }
 .c3d-link { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 4px; opacity: 0; transform: translateX(-6px); transition: opacity 0.3s, transform 0.3s; white-space: nowrap; }
 .c3d:hover .c3d-link { opacity: 1; transform: translateX(0); }
 .c3d-link span { font-size: 13px; }
@@ -344,7 +371,6 @@ body::after {
 
 /* =============================================
    3D PROJECT CARD — ProjectsGrid component
-   (child selectors + CSS vars — can't use Tailwind)
    ============================================= */
 .pc3 {
   position: relative; aspect-ratio: 4/3; border-radius: 4px; overflow: hidden;
@@ -353,25 +379,53 @@ body::after {
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 .pc3:hover {
-  box-shadow: 0 35px 70px rgba(0,0,0,0.75), 0 0 0 1px rgba(201,168,76,0.22), 0 0 50px rgba(201,168,76,0.05);
+  box-shadow: 0 35px 70px rgba(0,0,0,0.75), 0 0 0 1px rgba(201,168,76,0.25), 0 0 50px rgba(201,168,76,0.06);
 }
+
+/* ── IMAGE — bright & vivid ── */
 .pc3-bg { position: absolute; inset: 0; }
-.pc3-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.55; transition: opacity 0.4s, transform 0.7s; }
-.pc3:hover .pc3-img { opacity: 0.72; transform: scale(1.07); }
+.pc3-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.92;                              /* was 0.55 — much brighter */
+  filter: brightness(1.05) contrast(1.08) saturate(1.12);
+  transition: opacity 0.4s, transform 0.7s, filter 0.4s;
+}
+.pc3:hover .pc3-img {
+  opacity: 1;                                 /* was 0.72 — full brightness on hover */
+  filter: brightness(1.1) contrast(1.1) saturate(1.18);
+  transform: scale(1.07);
+}
+
 .pc3-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 .pc3-bignum {
   font-family: var(--font-cormorant); font-size: 110px; font-weight: 700;
   color: var(--ac); opacity: 0.09; transition: opacity 0.4s; user-select: none;
 }
 .pc3:hover .pc3-bignum { opacity: 0.18; }
+
+/* ── OVERLAY — only dark at bottom for text legibility ── */
 .pc3-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(6,6,6,.97) 0%, rgba(6,6,6,.5) 42%, rgba(6,6,6,.1) 72%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(6,6,6,0.96) 0%,
+    rgba(6,6,6,0.52) 32%,
+    rgba(6,6,6,0.08) 56%,
+    transparent 100%
+  );
   transition: background 0.35s;
 }
 .pc3:hover .pc3-overlay {
-  background: linear-gradient(to top, rgba(6,6,6,.97) 0%, rgba(6,6,6,.6) 48%, rgba(6,6,6,.15) 72%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(6,6,6,0.96) 0%,
+    rgba(6,6,6,0.58) 38%,
+    rgba(6,6,6,0.06) 60%,
+    transparent 100%
+  );
 }
+
 .pc3-glare { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 3; transition: opacity 0.15s; }
 .pc3-shine {
   position: absolute; top: -60%; left: -30%; width: 60%; height: 200%;
@@ -382,15 +436,15 @@ body::after {
   position: absolute; inset: 0; border: 1px solid rgba(201,168,76,0.07);
   pointer-events: none; z-index: 6; transition: border-color 0.35s, box-shadow 0.35s; border-radius: inherit;
 }
-.pc3:hover .pc3-border { border-color: rgba(201,168,76,0.28); box-shadow: inset 0 0 40px rgba(201,168,76,0.04); }
+.pc3:hover .pc3-border { border-color: rgba(201,168,76,0.3); box-shadow: inset 0 0 40px rgba(201,168,76,0.05); }
 .pc3-topbar { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; z-index: 5; }
 .pc3-cat {
   font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--ac); border: 1px solid var(--ac); opacity: 0.75; padding: 4px 10px;
-  backdrop-filter: blur(6px); background: rgba(6,6,6,0.35); transition: opacity 0.3s, transform 0.3s;
+  color: var(--ac); border: 1px solid var(--ac); opacity: 1; padding: 4px 10px;
+  backdrop-filter: blur(12px); background: rgba(6,6,6,0.75); transition: opacity 0.3s, transform 0.3s;
 }
 .pc3:hover .pc3-cat { opacity: 1; transform: translateY(-2px); }
-.pc3-idx { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.12); letter-spacing: 0.05em; }
+.pc3-idx { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.18); letter-spacing: 0.05em; }
 .pc3-deco { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 .pc3-dline { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, rgba(201,168,76,0.1), transparent); opacity: 0; transition: opacity 0.4s; }
 .pc3:hover .pc3-dline { opacity: 1; }
@@ -399,12 +453,12 @@ body::after {
 .pc3-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 26px; z-index: 5; transition: transform 0.1s ease-out; }
 .pc3-title { font-family: var(--font-cormorant); font-size: clamp(20px,2.2vw,30px); font-weight: 400; color: #fff; margin: 0 0 8px; line-height: 1.2; transition: letter-spacing 0.3s; }
 .pc3:hover .pc3-title { letter-spacing: 0.01em; }
-.pc3-desc { font-family: var(--font-outfit); font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.65; margin: 0 0 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s; }
-.pc3:hover .pc3-desc { color: rgba(255,255,255,0.56); }
+.pc3-desc { font-family: var(--font-outfit); font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.65; margin: 0 0 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s; }
+.pc3:hover .pc3-desc { color: rgba(255,255,255,0.62); }
 .pc3-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .pc3-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-.pc3-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.26); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 3px 7px; transition: all 0.3s; }
-.pc3:hover .pc3-tag { color: rgba(255,255,255,0.45); border-color: rgba(201,168,76,0.15); }
+.pc3-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07); padding: 3px 7px; transition: all 0.3s; }
+.pc3:hover .pc3-tag { color: rgba(255,255,255,0.5); border-color: rgba(201,168,76,0.18); }
 .pc3-live { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ac); text-decoration: none; opacity: 0; transform: translateX(-4px); transition: opacity 0.3s, transform 0.3s; white-space: nowrap; }
 .pc3:hover .pc3-live { opacity: 1; transform: translateX(0); }
 
