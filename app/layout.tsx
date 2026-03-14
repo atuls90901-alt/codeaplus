@@ -23,7 +23,15 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://codeaplus.com'),
+  metadataBase: new URL('https://codeaplus.pro'),
+  verification: {
+    google: 'googleadb21ea045b6f273',
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
   title: {
     default: 'CodeaPlus — Premium Web Agency India | MERN & Next.js Experts',
     template: '%s | CodeaPlus',
@@ -34,7 +42,7 @@ export const metadata: Metadata = {
     'ecommerce development', 'react developer india', 'full stack development',
     'website design india', 'web app development', 'nodejs developer',
   ],
-  authors: [{ name: 'CodeaPlus', url: 'https://codeaplus.com' }],
+  authors: [{ name: 'CodeaPlus', url: 'https://codeaplus.pro' }],
   creator: 'CodeaPlus',
   publisher: 'CodeaPlus',
   robots: {
@@ -45,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://codeaplus.com',
+    url: 'https://codeaplus.pro',
     siteName: 'CodeaPlus',
     title: 'CodeaPlus — Premium Web Agency India',
     description: 'We build high-performance websites & web apps for ambitious businesses.',
@@ -58,7 +66,7 @@ export const metadata: Metadata = {
     images: ['/og-image.jpg'],
   },
   alternates: {
-    canonical: 'https://codeaplus.com',
+    canonical: 'https://codeaplus.pro',
   },
 }
 
