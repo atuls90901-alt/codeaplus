@@ -11,6 +11,7 @@ import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
 import ClientLogos from '@/components/ClientLogos'
 import CaseStudies from '@/components/CaseStudies'
+import AuditSection from '@/components/AuditSection'
 import dynamic from 'next/dynamic'
 
 const Chatbot = dynamic(() => import('@/components/Chatbot'), { ssr: false })
@@ -64,6 +65,8 @@ export default async function Home() {
         <Testimonials testimonials={testimonials} />
         <div className="gold-line" />
         <Pricing />
+         <div className="gold-line" />
+        <AuditSection />
         <div className="gold-line" />
         <Contact />
       </main>
