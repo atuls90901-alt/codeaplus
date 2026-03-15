@@ -6,9 +6,9 @@ const IMG_PHONE  = 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c
 const IMG_CARD   = 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=400&q=80'
 
 const STATS = [
-  { key: 'projects'     as const, target: 50, suffix: '+',  label: 'Projects Shipped' },
-  { key: 'satisfaction' as const, target: 98, suffix: '%',  label: 'Satisfaction Rate' },
-  { key: 'years'        as const, target: 3,  suffix: 'yr', label: 'Excellence'        },
+  { key: 'projects'     as const, target: 50, suffix: '+',  label: 'Products Shipped'  },
+  { key: 'satisfaction' as const, target: 98, suffix: '%',  label: 'Client Satisfaction' },
+  { key: 'years'        as const, target: 3,  suffix: 'yr', label: 'Building Startups'  },
 ]
 
 const AVATARS = [
@@ -16,6 +16,13 @@ const AVATARS = [
   { ini: 'PM', hue: 58 },
   { ini: 'RS', hue: 76 },
   { ini: 'NK', hue: 94 },
+]
+
+/* Trust badges — microcopy below CTAs */
+const TRUST = [
+  '✓ Fixed-price contracts',
+  '✓ 2-week sprint delivery',
+  '✓ 30-day post-launch support',
 ]
 
 export default function Hero() {
@@ -83,18 +90,12 @@ export default function Hero() {
           animate-[streakPulse_6s_ease-in-out_infinite]" />
       </div>
 
-      {/* ════════════════════════════════════════════
-          CONTENT — full height flex column
-          top: nav spacer
-          middle: hero grid (grows to fill)
-          bottom: stats bar
-      ════════════════════════════════════════════ */}
       <div className="relative z-[5] flex flex-col flex-1 min-h-screen">
 
         {/* Nav spacer */}
         <div className="h-24 shrink-0" />
 
-        {/* Hero grid — grows to fill available space */}
+        {/* Hero grid */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 items-center gap-8 py-8">
 
           {/* ── LEFT: Copy ── */}
@@ -112,14 +113,14 @@ export default function Hero() {
                 inline-block w-1.5 h-1.5 rounded-full
                 bg-green-400 shadow-[0_0_6px_#4ade80]
                 animate-blink-dot" />
-              Available for projects · 2026
+              Now taking projects · 2026
             </div>
 
-            {/* Headline */}
+            {/* Headline — improved */}
             <h1 className="
               opacity-0 animate-fade-up [animation-delay:350ms]
               font-cormorant font-light leading-[0.93] tracking-tight
-              mb-7 md:mb-9
+              mb-5 md:mb-7
               text-[clamp(48px,9vw,108px)]"
             >
               <span className="block text-white">We Build</span>
@@ -131,21 +132,34 @@ export default function Hero() {
               </span>
             </h1>
 
-            {/* Subheadline */}
+            {/* Subheadline — improved copy */}
             <p className="
               opacity-0 animate-fade-up [animation-delay:500ms]
-              font-outfit font-light leading-[1.75] text-white/50
-              text-[clamp(14px,1.5vw,16px)] max-w-[420px] mb-8 md:mb-10"
+              font-outfit font-light leading-[1.75] text-white/55
+              text-[clamp(14px,1.5vw,17px)] max-w-[460px] mb-5"
             >
-              CodeaPlus engineers{' '}
-              <strong className="text-white/80 font-normal">
-                SaaS MVPs, marketplace platforms,
-              </strong>{' '}
-              and custom web applications — turning ambitious ideas into fundable,
-              scalable digital products.
+              We turn your startup idea into a{' '}
+              <strong className="text-white/85 font-normal">
+                fundable, scalable digital product
+              </strong>
+              {' '}— SaaS MVPs, marketplace platforms, and custom web applications.
+              From first commit to first customer.
             </p>
 
-            {/* CTAs */}
+            {/* Trust badges — microcopy */}
+            <div className="
+              opacity-0 animate-fade-up [animation-delay:600ms]
+              flex flex-wrap gap-x-4 gap-y-1 mb-8 md:mb-10"
+            >
+              {TRUST.map(t => (
+                <span key={t}
+                  className="font-mono text-[10px] tracking-[0.05em] text-white/35">
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            {/* CTAs — improved */}
             <div className="
               opacity-0 animate-fade-up [animation-delay:650ms]
               flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-10 md:mb-0"
@@ -162,15 +176,20 @@ export default function Hero() {
                   group-hover:scale-x-100 transition-transform duration-300" />
                 <span className="relative z-10">Start Your Project →</span>
               </a>
+
               <a
-                href="#work"
+                href="/ai-project-planner"
                 className="
                   relative group
                   font-mono text-[11px] tracking-[0.15em] uppercase
                   text-white/50 hover:text-gold transition-colors duration-200
                   flex items-center gap-3 py-4"
               >
-                View Case Studies
+                <span className="text-[9px] text-gold/60 border border-gold/20 px-2 py-0.5
+                  rounded-full font-mono tracking-widest uppercase">
+                  Free
+                </span>
+                Plan My Project
                 <span className="group-hover:translate-x-1.5 transition-transform duration-200">→</span>
                 <span className="absolute bottom-3 left-0 w-0 h-px bg-gold group-hover:w-full transition-all duration-300" />
               </a>
@@ -293,15 +312,11 @@ export default function Hero() {
 
         {/* ════════════════════════════════════════════
             BOTTOM BAR — stats + avatar trust strip
-            Always at bottom, never overlapping
         ════════════════════════════════════════════ */}
         <div
           ref={statsRef}
-          className="
-            shrink-0 pb-8 md:pb-10
-            opacity-0 animate-fade-up [animation-delay:900ms]"
+          className="shrink-0 pb-8 md:pb-10 opacity-0 animate-fade-up [animation-delay:900ms]"
         >
-          {/* Divider */}
           <div className="gold-line mb-7" />
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -321,7 +336,7 @@ export default function Hero() {
               ))}
             </div>
 
-            {/* Avatar trust strip — right side */}
+            {/* Avatar trust strip */}
             <div className="flex items-center gap-3">
               <div className="flex -space-x-2">
                 {AVATARS.map(({ ini, hue }) => (
@@ -343,12 +358,12 @@ export default function Hero() {
                   Trusted by 50+ founders
                 </p>
                 <p className="font-mono text-2xs tracking-[0.08em] uppercase text-white/30">
-                  India · UAE · US
+                  India · UAE · US · UK
                 </p>
               </div>
             </div>
 
-            {/* Scroll indicator — far right, desktop only */}
+            {/* Scroll indicator */}
             <div className="hidden md:flex flex-col items-center gap-2 self-end pb-1">
               <div className="w-px h-10 bg-gradient-to-b from-gold to-transparent animate-scroll-pulse" />
               <div
@@ -358,12 +373,9 @@ export default function Hero() {
                 Scroll
               </div>
             </div>
-
           </div>
         </div>
-
       </div>
-
     </section>
   )
 }
