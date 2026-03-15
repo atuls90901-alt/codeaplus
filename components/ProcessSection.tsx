@@ -91,7 +91,7 @@ export default function ProcessSection() {
 
                   {/* Content card */}
                   <div className={`flex-1 ${isLeft ? 'md:pr-10' : 'md:pl-10'}`}>
-                    <div className="reveal border border-gold/[0.1] bg-bg-secondary p-7
+                    <div className="border border-gold/[0.1] bg-bg-secondary p-7
                       hover:border-gold/25 transition-all duration-300 group h-full">
 
                       <div className="flex items-start gap-5">
